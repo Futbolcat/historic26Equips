@@ -104,19 +104,22 @@ function procesarDatos(resultadoBloques) {
   
   // 1. Localizar la columna que se llama exactamente "NOM" en la cabecera (Fila 0)
   var columnaNomIndex = -1;
+  var columnaRolIndex = -1;
   if (cabeceraOpciones && Array.isArray(cabeceraOpciones)) {
     for (var j = 0; j < cabeceraOpciones.length; j++) {
       var textoCabecera = cabeceraOpciones[j].toString().trim().toUpperCase();
       textoCabecera = textoCabecera.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       if (textoCabecera.indexOf("NOM") > -1 || textoCabecera === "JUGADOR") {
         columnaNomIndex = j;
-        break; 
+      }
+      if (textoCabecera.indexOf("DEMARCACIO") > -1 || textoCabecera.indexOf("ROL") > -1 || textoCabecera.indexOf("POSICIO") > -1) {
+        columnaRolIndex = j;
       }
     }
   }
   // 2. Extraer los nombres de los jugadores si la columna existe
   var comboJugador = document.getElementById('jugador');
-  comboJugador.innerHTML = '<option value="">Esborrar</option>';
+  comboJugador.innerHTML = '<option value="">Tria membre</option>';
   
   if (columnaNomIndex !== -1) {
     var nombresMiembros = [];
@@ -125,9 +128,17 @@ function procesarDatos(resultadoBloques) {
     for (var i = 1; i < datosPrincipal.length; i++) {
       var filaVacia = datosPrincipal[i].every(function(c) { return c.toString().trim() === ""; });
       if (filaVacia) continue;
-      
+    
+      // FILTRO ESTRICTO: Si encontramos al entrenador en su columna correspondiente, paramos el bucle por completo
+      if (columnaRolIndex !== -1) {
+        var valorRol = datosPrincipal[i][columnaRolIndex].toString().trim().toLowerCase();
+        if (valorRol === "entrenador") {
+          break; // Detiene la lectura de filas; ignora al entrenador y todo lo que esté debajo
+        }
+      }
+    
       var nombreValue = datosPrincipal[i][columnaNomIndex].toString().trim();
-      if (nombreValue !== "" && nombreValue.toUpperCase() !== "ENTRENADOR") {
+      if (nombreValue !== "") {
         nombresMiembros.push(nombreValue);
       }
     }
@@ -163,13 +174,17 @@ function renderizarTablasCompletas() {
 // ==========================================
 function detectarMiembro() {
   var miembroSeleccionado = document.getElementById('jugador').value;
+  var comboJugador = document.getElementById('jugador');
   
-  // Si el usuario vuelve a seleccionar el texto vacío "Tria membre", restauramos las tablas completas
+  // Si el usuario selecciona "Esborrar" o la opción vacía, restauramos todo
   if (!miembroSeleccionado) {
+    comboJugador.options[0].text = "Tria membre"; // El texto vuelve a su estado original neutro
     renderizarTablasCompletas();
     return;
   }
-  
+
+  // Ajuste: Como hay un jugador seleccionado y la ficha está activa, mutamos el texto a "Esborrar"
+  comboJugador.options[0].text = "Esborrar";
   if (!datosEquipoActual) return;
   
   var datosP = datosEquipoActual.principal;
@@ -201,13 +216,13 @@ function detectarMiembro() {
   
   // 3. CONSTRUIR ESTRUCTURA DE TARJETA VERTICAL COMPACTA
   var htmlFicha = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto;">';
-  htmlFicha += '<table style="width: 100%; border-collapse: collapse; margin-top: 15px;">';
+  htmlFicha += '<table style="width: 100%; border-collapse: collapse;">';
   
   // Procesar campos de la Tabla Principal (C:I) hacia abajo
   for (var j = 0; j < cabeceraP.length; j++) {
     var tituloCamp = cabeceraP[j].toString().trim();
     var valorCamp = datosP[filaJugadorIndex][j].toString().trim();
-    if (tituloCamp === "") continue; // Nos saltamos columnas sin título
+    if (tituloCamp === "" || tituloCamp.toUpperCase().indexOf("BAIXES") > -1) continue; // Nos saltamos columnas sin título
     
     htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
     htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCamp + ':</td>';
@@ -228,7 +243,6 @@ function detectarMiembro() {
   }
   
   htmlFicha += '</table></div>';
-  
   // Inyectamos la ficha borrando las tablas horizontales temporalmente
   document.getElementById('resultado').innerHTML = htmlFicha;
 }
