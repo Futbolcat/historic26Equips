@@ -169,7 +169,7 @@ function detectarMiembro() {
 
 
 function completarDatosFicha(nombreJugador) {
-  console.writeline (nombreJugador)
+  console.log (nombreJugador)
   if (!datosEquipoActual) return;
   var datosP = datosEquipoActual.principal;
   var datosS = datosEquipoActual.secundaria;
