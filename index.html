@@ -86,33 +86,95 @@
       const URL_LOGO_TORNEO = "https://www.torneigdhistorics.cat/wp-content/uploads/2023/07/logo_th23.png"; // <-- CAMBIA por la web de tu torneo
 
       const ESCUDOS_EQUIPOS = {
-        "Equipo A": "https://link-a-la-foto-del-escudo-A.png",
-        "Equipo B": "https://link-a-la-foto-del-escudo-B.png",
-        "Equipo C": "https://link-a-la-foto-del-escudo-C.png"
-        // Escribe el nombre EXACTO de tu pestaña de Excel y al lado el enlace de su imagen
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/svg+xml" href="https://wikimedia.org">
+    <title>Històrics26 - Equips</title>
+    <style>
+      body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 12px; background-color: #f5f7fa; color: #333; margin: 0; font-size: 17px; }
+      .contenedor { max-width: 1200px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+      .cabecera-web { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0; padding-bottom: 15px; }
+      h2 { color: #1a73e8; margin: 0; font-size: 24px; text-align: left; }
+      .logo-torneo { height: 60px; width: auto; object-fit: contain; }
+      .espacio-tablas { margin-top: 30px; }
+      .controles { margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+      .selector-bloque { display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; }
+      .escudo-club { height: 50px; width: 50px; object-fit: contain; display: none; }
+      select { padding: 14px; font-size: 18px; border: 2px solid #ccc; border-radius: 6px; background: white; flex-grow: 1; box-sizing: border-box; width: 100%; }
+      button { padding: 14px; font-size: 18px; background-color: #1a73e8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; box-sizing: border-box; }
+      button:hover { background-color: #1557b0; }
+      .cargando { color: #666; font-style: italic; margin-top: 15px; font-size: 17px; text-align: center; }
+      .tabla-contenedor { margin-top: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #dcdcdc; border-radius: 6px; }
+      table { border-collapse: collapse; width: 100%; background: white; table-layout: auto; }
+      th, td { border: 1px solid #dcdcdc; padding: 14px 16px; text-align: left; font-size: 16px; white-space: nowrap; }
+      th { background-color: #2c3e50; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; }
+      .col-auto-centrada { width: 1%; text-align: center !important; white-space: nowrap; } 
+      .rol-porter { background-color: #e8f5e9 !important; color: #1b5e20; font-weight: bold; }        
+      .rol-defensa { background-color: #e3f2fd !important; color: #0d47a1; font-weight: bold; }       
+      .rol-migcampista { background-color: #fff3e0 !important; color: #e65100; font-weight: bold; }   
+      .rol-davanter { background-color: #ffebee !important; color: #b71c1c; font-weight: bold; }      
+      .fila-entrenador td { background-color: #f3e5f5 !important; color: #4a148c; font-weight: bold; }    
+      .fila-separadora { height: 25px; background-color: transparent !important; }
+      .fila-separadora td { border: none !important; background: transparent !important; padding: 0 !important; }
+      @media (min-width: 600px) {
+        body { padding: 30px; font-size: 15px; }
+        .contenedor { padding: 25px; }
+        .controles { flex-direction: row; justify-content: center; }
+        .selector-bloque { width: auto; min-width: 350px; }
+        button { width: auto; padding: 10px 25px; font-size: 16px; }
+        th, td { padding: 10px 14px; font-size: 14px; }
+        h2 { font-size: 26px; }
+        .logo-torneo { height: 80px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="contenedor">
+      <div class="cabecera-web">
+        <h2>Consulta de plantilles d'equips</h2>
+        <img id="imgTorneo" class="logo-torneo" src="" alt="Torneig">
+      </div>
+      <div class="controles">
+        <div class="selector-bloque">
+          <img id="escudoClub" class="escudo-club" src="" alt="Escut">
+          <select id="equipo" onchange="cambiarEscudo()">
+            <option value="">Tria equip</option>
+          </select>
+        </div>
+        <button onclick="buscar()">Cerca</button>
+      </div>
+      <div id="resultado"></div>
+    </div>
+
+    <script>
+      const URL_API = "https://script.google.com/macros/s/AKfycbzggpYvXbcCjXahfxqatcq0FYE_FjYVayUYs5RYD0-QsHVooxVAcsQoHCs4m-OMEJP7EA/exec";
+      const URL_LOGO_TORNEO = "https://torneigdhistorics.cat"; 
+
+      const ESCUDOS_EQUIPOS = {
+        "Horta": "https://link-a-la-foto-del-escudo-del-horta.png",
+        "Europa": "https://link-a-la-foto-del-escudo-del-europa.png",
+        "Sant Andreu": "https://link-a-la-foto-del-escudo-del-sant-andreu.png"
       };
-      // =========================================================
 
       window.onload = function() {
-        // Colocar el logo del torneo fijo arriba a la derecha
         document.getElementById("imgTorneo").src = URL_LOGO_TORNEO;
-
         fetch(`${URL_API}?accion=lista`)
           .then(res => res.json())
           .then(cargarSelector)
           .catch(err => console.error("Error carregant llista:", err));
       };
 
-      // Función que cambia el escudo a la izquierda automáticamente al seleccionar en el menú
       function cambiarEscudo() {
         var equipoSeleccionado = document.getElementById('equipo').value;
         var imgEscudo = document.getElementById('escudoClub');
-        
         if (equipoSeleccionado && ESCUDOS_EQUIPOS[equipoSeleccionado]) {
           imgEscudo.src = ESCUDOS_EQUIPOS[equipoSeleccionado];
-          imgEscudo.style.display = "block"; // Muestra la imagen
+          imgEscudo.style.display = "block";
         } else {
-          imgEscudo.style.display = "none"; // Oculta la imagen si no hay escudo asignado
+          imgEscudo.style.display = "none";
         }
       }
 
@@ -122,7 +184,7 @@
         if(equipos && Array.isArray(equipos)) {
           equipos.forEach(function(nombre) {
             var option = document.createElement('option');
-            option.value = nombre;
+            option.value = width = nombre;
             option.text = nombre;
             select.appendChild(option);
           });
@@ -136,7 +198,6 @@
           return;
         }
         document.getElementById('resultado').innerHTML = "<p class='cargando'>Buscant les dades...</p>";
-        
         fetch(`${URL_API}?accion=equipo&nombre=${encodeURIComponent(equipo)}`)
           .then(res => res.json())
           .then(procesarDatos)
@@ -160,19 +221,16 @@
         if (!datos || datos.length === 0) return '';
         var html = '<div class="tabla-contenedor"><table id="' + idTabla + '">';
         var indicesAutoCentrados = [];
-        var cabeceraFila = datos; 
-        
+        var cabeceraFila = datos[0]; 
         for (var j = 0; j < cabeceraFila.length; j++) {
           var nombreCabecera = cabeceraFila[j].toString().trim().toLowerCase();
           if (nombreCabecera === "dorsal" || nombreCabecera === "demarcació" || nombreCabecera === "anys al club" || nombreCabecera === "any de neixement") {
             indicesAutoCentrados.push(j);
           }
         }
-
         for (var i = 0; i < datos.length; i++) {
           var filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; });
           if (filaVacia) continue;
-          
           var esEntrenador = false;
           if (aplicarRoles && i > 0) {
             for (var c = 0; c < datos[i].length; c++) {
@@ -182,16 +240,35 @@
               }
             }
           }
-
           var claseFila = (i === 0) ? 'class="cabecera"' : (esEntrenador ? 'class="fila-entrenador"' : '');
           html += '<tr ' + claseFila + '>';
-
           for (var j = 0; j < datos[i].length; j++) {
             var valorCelda = datos[i][j].toString().trim();
             var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : '';
-
             if (i === 0) {
               html += '<th ' + claseCelda + '>' + valorCelda + '</th>';
             } else {
               if (aplicarRoles && !esEntrenador) {
-var textoMinuscula = valorCelda.toLowerCase();if (textoMinuscula === "porter") claseCelda = 'class="rol-porter"';else if (textoMinuscula === "defensa") claseCelda = 'class="rol-defensa"';else if (textoMinuscula === "migcampista") claseCelda = 'class="rol-migcampista"';else if (textoMinuscula === "davanter") claseCelda = 'class="rol-davanter"';else if (indicesAutoCentrados.includes(j)) { claseCelda = 'class="col-auto-centrada"'; }} else if (indicesAutoCentrados.includes(j)) {claseCelda = 'class="col-auto-centrada"';}html += '<td ' + claseCelda + '>' + valorCelda + '';}}html += '';if (aplicarRoles && esEntrenador) {html += '';for (var k = 0; k < datos[i].length; k++) html += '';html += '';}}html += '';return html;}
+                var textoMinuscula = valorCelda.toLowerCase();
+                if (textoMinuscula === "porter") claseCelda = 'class="rol-porter"';
+                else if (textoMinuscula === "defensa") claseCelda = 'class="rol-defensa"';
+                else if (textoMinuscula === "migcampista") claseCelda = 'class="rol-migcampista"';
+                else if (textoMinuscula === "davanter") claseCelda = 'class="rol-davanter"';
+                else if (indicesAutoCentrados.includes(j)) { claseCelda = 'class="col-auto-centrada"'; }
+              } else if (indicesAutoCentrados.includes(j)) {
+                claseCelda = 'class="col-auto-centrada"';
+              }
+              html += '<td ' + claseCelda + '>' + valorCelda + '</td>';
+            }
+          }
+          html += '</tr>';
+          if (aplicarRoles && esEntrenador) {
+            html += '<tr class="fila-separadora">';
+            for (var k = 0; k < datos[i].length; k++) html += '<td></td>';
+            html += '</tr>';
+          }
+		}
+		html += '';
+		return html;
+	}
+	</script>
