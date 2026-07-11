@@ -144,7 +144,6 @@ function detectarMiembro() {
   var miembroSeleccionado = document.getElementById('jugador').value;
   var comboJugador = document.getElementById('jugador');
   
-  // Si el usuario selecciona "Esborrar" o la opción vacía, restauramos las tablas completas
   if (!miembroSeleccionado) {
     if (comboJugador && comboJugador.options) {
       comboJugador.options[0].text = "Tria jugador"; 
@@ -153,20 +152,21 @@ function detectarMiembro() {
     return;
   }
   
-  // Mutamos el primer texto del desplegable a "Esborrar"
   if (comboJugador && comboJugador.options) {
     comboJugador.options[0].text = "Esborrar";
   }
   
-  // CONSTRUCCIÓN DE LA FICHA SIMPLIFICADA
-  // Las tablas horizontales grandes desaparecen automáticamente porque borramos el contenido de 'resultado'
   var htmlFicha = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto; text-align: center;">';
   htmlFicha += '<h3 style="margin: 0; color: #1a73e8; font-size: 22px;">Fitxa jugador</h3>';
+  htmlFicha += '<div id="datosFicha" style="margin-top:15px; text-align:left;"></div>'; // <-- Contenedor para los datos
   htmlFicha += '</div>';
   
-  // Inyectamos la tarjeta en la pantalla
   document.getElementById('resultado').innerHTML = htmlFicha;
+  
+  // Llamamos a la subfunción que buscará los datos (la crearemos en el siguiente paso)
+  completarDatosFicha(miembroSeleccionado);
 }
+
 
 function completarDatosFicha(nombreJugador) {
   if (!datosEquipoActual) return;
