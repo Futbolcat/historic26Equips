@@ -201,7 +201,6 @@ function detectarMiembro() {
   
   // 3. CONSTRUIR ESTRUCTURA DE TARJETA VERTICAL COMPACTA
   var htmlFicha = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto;">';
-  htmlFicha += '<h3 style="margin-top: 0; text-align: center; color: #1a73e8; font-size: 22px; border: none; padding: 0;">📝 Fitxa del Membre</h3>';
   htmlFicha += '<table style="width: 100%; border-collapse: collapse; margin-top: 15px;">';
   
   // Procesar campos de la Tabla Principal (C:I) hacia abajo
