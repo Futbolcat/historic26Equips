@@ -157,7 +157,7 @@ function detectarMiembro() {
   }
   
   var htmlFicha = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto; text-align: center;">';
-  htmlFicha += '<h3 style="margin: 0; color: #1a73e8; font-size: 22px;">' + miembroSeleccionado + '</h3>';
+  //htmlFicha += '<h3 style="margin: 0; color: #1a73e8; font-size: 22px;">' + miembroSeleccionado + '</h3>';
   htmlFicha += '<div id="datosFicha" style="margin-top:15px; text-align:left;"></div>'; // <-- Contenedor para los datos
   htmlFicha += '</div>';
   
