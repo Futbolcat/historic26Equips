@@ -111,7 +111,7 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
   // Mapejar quines columnes s'han de centrar automàticament segons el seu nom
   for (var j = 0; j < cabeceraFila.length; j++) { 
     var nombreCabecera = cabeceraFila[j].toString().trim().toLowerCase(); 
-    if (nombreCabecera === "dorsal" || nombreCabecera === "demarcació" || nombreCabecera === "anys al club" || nombreCabecera === "any de neixement") { 
+    if (nombreCabecera === "dorsal" || nombreCabecera === "demarcació" || nombreCabecera === "anys al club" || nombreCabecera === "data naixement") { 
       indicesAutoCentrados.push(j); 
     } 
   } 
