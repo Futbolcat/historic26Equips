@@ -59,3 +59,88 @@ function cargarSelector(equipos) {
     }); 
   } 
 }
+
+// ==========================================
+// PARTE 2: BUSQUEDA I HISTÒRIAL DE JUGADORS
+// ==========================================
+function buscar() { 
+  var equipo = document.getElementById('equipo').value; 
+  if (!equipo) { 
+    document.getElementById('resultado').innerHTML = "<p style='color:orange; text-align:center;'>Si us plau, selecciona un equip vàlid.</p>"; 
+    return; 
+  } 
+  document.getElementById('resultado').innerHTML = "<p class='cargando'>Buscant les dades...</p>"; 
+  
+  fetch(`${URL_API}?accion=equipo&nombre=${encodeURIComponent(equipo)}`)
+    .then(res => res.json())
+    .then(procesarDatos)
+    .catch(err => { 
+      document.getElementById('resultado').innerHTML = "<p style='color:red; text-align:center;'>Error de connexió.</p>"; 
+    }); 
+}
+
+function procesarDatos(resultadoBloques) { 
+  if (!resultadoBloques || !resultadoBloques.principal || resultadoBloques.principal.length === 0) { 
+    document.getElementById('resultado').innerHTML = "<p style='color:red; text-align:center;'>La fulla està buida o no s'ha trobat.</p>"; 
+    return; 
+  } 
+  
+  datosEquipoActual = resultadoBloques;
+  var datosPrincipal = resultadoBloques.principal;
+  var columnaNomIndex = -1;
+  var columnaRolIndex = -1;
+  
+  // Localizar columnas en la cabecera (Fila 0)
+  if (datosPrincipal && datosPrincipal.length > 0) {
+    for (var j = 0; j < datosPrincipal[0].length; j++) {
+      var textoCabecera = datosPrincipal[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (textoCabecera.indexOf("NOM") > -1 || textoCabecera === "JUGADOR") columnaNomIndex = j;
+      if (textoCabecera.indexOf("DEMARCACIO") > -1 || textoCabecera.indexOf("ROL") > -1 || textoCabecera.indexOf("POSICIO") > -1) columnaRolIndex = j;
+    }
+  }
+
+  var comboJugador = document.getElementById('jugador');
+  comboJugador.innerHTML = '<option value="">Tria jugador</option>';
+  
+  if (columnaNomIndex !== -1) {
+    var nombresMiembros = [];
+    var ignorarRestoCombo = false;
+    
+    for (var i = 1; i < datosPrincipal.length; i++) {
+      var filaVacia = datosPrincipal[i].every(function(c) { return c.toString().trim() === ""; });
+      if (filaVacia) continue;
+    
+      if (columnaRolIndex !== -1) {
+        var valorRol = datosPrincipal[i][columnaRolIndex].toString().trim().toLowerCase();
+        if (valorRol === "entrenador") {
+          ignorarRestoCombo = true; 
+        }
+      }
+    
+      if (!ignorarRestoCombo) {
+        var nombreValue = datosPrincipal[i][columnaNomIndex].toString().trim();
+        if (nombreValue !== "") nombresMiembros.push(nombreValue);
+      }
+    }
+    
+    nombresMiembros.sort(function(a, b) { return a.localeCompare(b); });
+    
+    nombresMiembros.forEach(function(nom) {
+      var opt = document.createElement('option');
+      opt.value = nom;
+      opt.text = nom;
+      comboJugador.appendChild(opt);
+    });
+    
+    document.getElementById('bloqueJugador').style.display = "block";
+  }
+  renderizarTablasCompletas();
+}
+
+function renderizarTablasCompletas() {
+  if (!datosEquipoActual) return;
+  var htmlFinal = generarEstructuraTabla(datosEquipoActual.principal, "tablaDatosPrincipal", true); 
+  htmlFinal += "<div class='espacio-tablas'></div>"; 
+  htmlFinal += generarEstructuraTabla(datosEquipoActual.secundaria, "tablaDatosSecundaria", false); 
+  document.getElementById('resultado').innerHTML = htmlFinal;
+}
