@@ -21,6 +21,9 @@ const ESCUDOS_EQUIPOS = {
   "UE Sants": "https://files.fcf.cat/escudos/clubes/escudos/00100_0000959051_1051_SantUE_200.png" 
 };
 
+// Variable global interna para guardar los datos cargados del equipo actual
+let datosEquipoActual = null;
+
 // ==========================================
 // LOGICA DE CÀRREGA INICIAL (AL OBRIR LA WEB)
 // ==========================================
@@ -95,14 +98,20 @@ function procesarDatos(resultadoBloques) {
     return; 
   } 
   
+  datosEquipoActual = resultadoBloques;
   var datosPrincipal = resultadoBloques.principal;
+  var cabeceraOpciones = datosPrincipal[0]; 
   
   // 1. Localizar la columna que se llama exactamente "NOM" en la cabecera (Fila 0)
   var columnaNomIndex = -1;
-  for (var j = 0; j < datosPrincipal[0].length; j++) {
-    if (datosPrincipal[0][j].toString().trim().toUpperCase() === "NOM") {
-      columnaNomIndex = j;
-      break;
+  if (cabeceraOpciones && Array.isArray(cabeceraOpciones)) {
+    for (var j = 0; j < cabeceraOpciones.length; j++) {
+      var textoCabecera = cabeceraOpciones[j].toString().trim().toUpperCase();
+      textoCabecera = textoCabecera.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (textoCabecera.indexOf("NOM") > -1 || textoCabecera === "JUGADOR") {
+        columnaNomIndex = j;
+        break; 
+      }
     }
   }
   // 2. Extraer los nombres de los jugadores si la columna existe
@@ -118,7 +127,7 @@ function procesarDatos(resultadoBloques) {
       if (filaVacia) continue;
       
       var nombreValue = datosPrincipal[i][columnaNomIndex].toString().trim();
-      if (nombreValue !== "") {
+      if (nombreValue !== "" && nombreValue.toUpperCase() !== "ENTRENADOR") {
         nombresMiembros.push(nombreValue);
       }
     }
@@ -137,21 +146,92 @@ function procesarDatos(resultadoBloques) {
     // Desplazar visualmente los controles e iluminar el nuevo menú a la derecha
     document.getElementById('bloqueJugador').style.display = "block";
   }
+  renderizarTablasCompletas();
+}
 
-  var htmlFinal = generarEstructuraTabla(datosPrincipal, "tablaDatosPrincipal", true); 
+// FUNCIÓN PARA VOLVER A PINTAR LAS TABLAS ORIGINALES HORIZONTALES
+function renderizarTablasCompletas() {
+  if (!datosEquipoActual) return;
+  var htmlFinal = generarEstructuraTabla(datosEquipoActual.principal, "tablaDatosPrincipal", true); 
   htmlFinal += "<div class='espacio-tablas'></div>"; 
-  htmlFinal += generarEstructuraTabla(resultadoBloques.secundaria, "tablaDatosSecundaria", false); 
-  document.getElementById('resultado').innerHTML = htmlFinal; 
+  htmlFinal += generarEstructuraTabla(datosEquipoActual.secundaria, "tablaDatosSecundaria", false); 
+  document.getElementById('resultado').innerHTML = htmlFinal;
 }
 
 // ==========================================
-// FUNCIÓ PER SI EN EL FUTUR ES VOL FER ALGUNA COSA AMB EL JUGADOR ESCOLLIT
+// GENERAR LA FITXA VERTICAL DEL JUGADOR
 // ==========================================
 function detectarMiembro() {
   var miembroSeleccionado = document.getElementById('jugador').value;
-  if (miembroSeleccionado) {
-    console.log("Membre seleccionat: " + miembroSeleccionado);
+  
+  // Si el usuario vuelve a seleccionar el texto vacío "Tria membre", restauramos las tablas completas
+  if (!miembroSeleccionado) {
+    renderizarTablasCompletas();
+    return;
   }
+  
+  if (!datosEquipoActual) return;
+  
+  var datosP = datosEquipoActual.principal;
+  var datosS = datosEquipoActual.secundaria;
+  var cabeceraP = datosP[0];
+  var cabeceraS = datosS[0];
+  
+  // 1. Encontrar en qué columna de la tabla principal está el nombre
+  var colNomIndex = -1;
+  for (var j = 0; j < cabeceraP.length; j++) {
+    if (cabeceraP[j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf("NOM") > -1) {
+      colNomIndex = j;
+      break;
+    }
+  }
+  
+  if (colNomIndex === -1) return;
+  
+  // 2. Buscar la fila exacta del jugador seleccionado
+  var filaJugadorIndex = -1;
+  for (var i = 1; i < datosP.length; i++) {
+    if (datosP[i][colNomIndex].toString().trim() === miembroSeleccionado) {
+      filaJugadorIndex = i;
+      break;
+    }
+  }
+  
+  if (filaJugadorIndex === -1) return;
+  
+  // 3. CONSTRUIR ESTRUCTURA DE TARJETA VERTICAL COMPACTA
+  var htmlFicha = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto;">';
+  htmlFicha += '<h3 style="margin-top: 0; text-align: center; color: #1a73e8; font-size: 22px; border: none; padding: 0;">📝 Fitxa del Membre</h3>';
+  htmlFicha += '<table style="width: 100%; border-collapse: collapse; margin-top: 15px;">';
+  
+  // Procesar campos de la Tabla Principal (C:I) hacia abajo
+  for (var j = 0; j < cabeceraP.length; j++) {
+    var tituloCamp = cabeceraP[j].toString().trim();
+    var valorCamp = datosP[filaJugadorIndex][j].toString().trim();
+    if (tituloCamp === "") continue; // Nos saltamos columnas sin título
+    
+    htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
+    htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCamp + ':</td>';
+    htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCamp + '</td>';
+    htmlFicha += '</tr>';
+  }
+  
+  // Procesar campos de la Tabla Secundaria (K) hacia abajo en la misma ficha
+  for (var j = 0; j < cabeceraS.length; j++) {
+    var tituloCampS = cabeceraS[j].toString().trim();
+    var valorCampS = datosS[filaJugadorIndex][j].toString().trim();
+    if (tituloCampS === "") continue;
+    
+    htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
+    htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCampS + ':</td>';
+    htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCampS + '</td>';
+    htmlFicha += '</tr>';
+  }
+  
+  htmlFicha += '</table></div>';
+  
+  // Inyectamos la ficha borrando las tablas horizontales temporalmente
+  document.getElementById('resultado').innerHTML = htmlFicha;
 }
 
 // ==========================================
@@ -168,7 +248,7 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
   var indicesAutoCentrados = []; 
   
   // Guardem la primera fila (fila 0), que sempre conté els títols de les cabeceres
-  var cabeceraFila = datos[0]; 
+  var cabeceraFila = datos; 
   
   // 2. MAPETJAR LES COLUMNES QUE S'HAN DE CENTRAR
   // Recorrem totes les cel·les de la cabecera per buscar els noms de les columnes a centrar
