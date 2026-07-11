@@ -116,7 +116,7 @@ function procesarDatos(resultadoBloques) {
   }
   // 2. Extraer los nombres de los jugadores si la columna existe
   var comboJugador = document.getElementById('jugador');
-  comboJugador.innerHTML = '<option value="">Tria membre</option>';
+  comboJugador.innerHTML = '<option value="">Esborrar</option>';
   
   if (columnaNomIndex !== -1) {
     var nombresMiembros = [];
@@ -247,14 +247,14 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
   var indicesAutoCentrados = []; 
   
   // Guardem la primera fila (fila 0), que sempre conté els títols de les cabeceres
-  var cabeceraFila = datos; 
+  var cabeceraFila = datos[0]; 
   
   // 2. MAPETJAR LES COLUMNES QUE S'HAN DE CENTRAR
   // Recorrem totes les cel·les de la cabecera per buscar els noms de les columnes a centrar
   if (cabeceraFila && Array.isArray(cabeceraFila)) {
     for (var j = 0; j < cabeceraFila.length; j++) { 
       // Convertim el text a minúscules i netegem espais per evitar errades d'escriptura al Sheets
-      var nombreCabecera = cabeceraFila[j].toString().trim().toLowerCase(); 
+      var nombreCabecera = cabeceraFila[j].toString().replace(/\s+/g, ' ').trim().toLowerCase(); 
       
       // Si la columna es diu Dorsal, Data naixement o Anys al club, guardem la seva posició (j)
       if (nombreCabecera === "dorsal" || nombreCabecera === "data naixement" || nombreCabecera === "anys al club") { 
