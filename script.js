@@ -106,22 +106,26 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
   
   var html = '<div class="tabla-contenedor"><table id="' + idTabla + '">'; 
   var indicesAutoCentrados = []; 
+  
+  // Guardamos la primera fila de datos para analizar los títulos de las columnas
   var cabeceraFila = datos[0]; 
   
-  // Mapejar quines columnes s'han de centrar automàticament segons el seu nom
-  for (var j = 0; j < cabeceraFila.length; j++) { 
-    var nombreCabecera = cabeceraFila[j].toString().trim().toLowerCase(); 
-    if (nombreCabecera === "dorsal" || nombreCabecera === "demarcació" || nombreCabecera === "anys al club" || nombreCabecera === "data naixement") { 
-      indicesAutoCentrados.push(j); 
+  // Mapeamos qué columnas del CONTENIDO se centrarán (Dorsal, Data naixement, Anys al club)
+  if (cabeceraFila && Array.isArray(cabeceraFila)) {
+    for (var j = 0; j < cabeceraFila.length; j++) { 
+      var nombreCabecera = cabeceraFila[j].toString().trim().toLowerCase(); 
+      if (nombreCabecera === "dorsal" || nombreCabecera === "data naixement" || nombreCabecera === "anys al club") { 
+        indicesAutoCentrados.push(j); 
+      } 
     } 
-  } 
+  }
   
-  // Recórrer les files de dades
+  // Recorrer las filas de la tabla
   for (var i = 0; i < datos.length; i++) { 
     var filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; }); 
     if (filaVacia) continue; 
     
-    // Detectar si la fila pertany a un entrenador
+    // Detectar si la fila pertenece a un entrenador
     var esEntrenador = false; 
     if (aplicarRoles && i > 0) { 
       for (var c = 0; c < datos[i].length; c++) { 
@@ -132,21 +136,24 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
       } 
     } 
     
-    // Assignar la classe de disseny a la fila sencer
+    // Asignar la clase a la fila sutilmente
     var claseFila = (i === 0) ? 'class="cabecera"' : (esEntrenador ? 'class="fila-entrenador"' : ''); 
     html += '<tr ' + claseFila + '>'; 
     
-    // Recórrer les celdes de la fila actual
+    // Recorrer las celdas de la fila actual
     for (var j = 0; j < datos[i].length; j++) { 
-      var valorCelda = datos[i][j].toString().trim(); 
+      var valorCell = datos[i][j].toString().trim(); 
+      
+      // Aplicar clase centrada si el índice de columna coincide
       var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : ''; 
       
       if (i === 0) { 
-        html += '<th ' + claseCelda + '>' + valorCelda + '</th>'; 
+        // Las cabeceras ya se centran por CSS, no necesitan clase col-auto-centrada
+        html += '<th>' + valorCell + '</th>'; 
       } else { 
-        // Aplicar colors individuals si no és l'entrenador i té el rol actiu
+        // Aplicar colores de rol si procede (Porter, Defensa, etc.)
         if (aplicarRoles && !esEntrenador) { 
-          var textoMinuscula = valorCelda.toLowerCase(); 
+          var textoMinuscula = valorCell.toLowerCase(); 
           if (textoMinuscula === "porter") claseCelda = 'class="rol-porter"'; 
           else if (textoMinuscula === "defensa") claseCelda = 'class="rol-defensa"'; 
           else if (textoMinuscula === "migcampista") claseCelda = 'class="rol-migcampista"'; 
@@ -155,12 +162,12 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
         } else if (indicesAutoCentrados.includes(j)) { 
           claseCelda = 'class="col-auto-centrada"'; 
         } 
-        html += '<td ' + claseCelda + '>' + valorCelda + '</td>'; 
+        html += '<td ' + claseCelda + '>' + valorCell + '</td>'; 
       } 
     } 
     html += '</tr>'; 
     
-    // Si és la fila del míster, injecta la fila de separació transparent a sota
+    // Inyectar fila de separación debajo del entrenador
     if (aplicarRoles && esEntrenador) { 
       html += '<tr class="fila-separadora">'; 
       for (var k = 0; k < datos[i].length; k++) html += '<td></td>'; 
