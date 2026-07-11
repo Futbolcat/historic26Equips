@@ -189,30 +189,30 @@ function completarDatosFicha(nombreJugador) {
   var tablaHtml = '<table style="width: 100%; border-collapse: collapse;">';
   
   // 1. Añadimos los datos de la Tabla Principal (C:I)
-  // datosP[0] contiene los títulos de las columnas de tu Excel
-  for (var j = 0; j < datosP[0].length; j++) {
-    var tit = datosP[0][j].toString().trim();
+  for (var j = 0; j < datosP.length; j++) {
+    var tit = datosP[j].toString().trim();
     var val = datosP[filaIdx][j].toString().trim();
     if (tit === "" || tit.toUpperCase().indexOf("BAIXES") > -1) continue;
     
     tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
-    tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tit + ':</td>';
-    tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px;">' + val + '</td>';
+    tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 40%; font-size: 15px; text-transform: uppercase; white-space: normal; word-break: break-word;">' + tit + ':</td>';
+    // white-space: normal permite que el texto largo salte de línea en el móvil de forma limpia
+    tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px; white-space: normal; word-break: break-word;">' + val + '</td>';
     tablaHtml += '</tr>';
   }
   
   // 2. Añadimos los datos de la Tabla Secundaria (K)
-  // datosS[0] contiene los títulos de la columna K
-  for (var j = 0; j < datosS[0].length; j++) {
-    var titS = datosS[0][j].toString().trim();
+  for (var j = 0; j < datosS.length; j++) {
+    var titS = datosS[j].toString().trim();
     var valS = datosS[filaIdx][j].toString().trim();
     if (titS === "" || titS.toUpperCase().indexOf("BAIXES") > -1) continue;
     
     tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
-    tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + titS + ':</td>';
-    tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valS + '</td>';
+    tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 40%; font-size: 15px; text-transform: uppercase; white-space: normal; word-break: break-word;">' + titS + ':</td>';
+    tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px; white-space: normal; word-break: break-word;">' + valS + '</td>';
     tablaHtml += '</tr>';
   }
+
   
   tablaHtml += '</table>';
   // Inyectamos los datos limpios dentro de la tarjeta gris
