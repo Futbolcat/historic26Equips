@@ -142,59 +142,87 @@ function renderizarTablasCompletas() {
 function detectarMiembro() {
   var miembroSeleccionado = document.getElementById('jugador').value;
   var comboJugador = document.getElementById('jugador');
+  
+  // Si es selecciona "Esborrar" o la opción buida, restaurem tot
   if (!miembroSeleccionado) {
-    if (comboJugador && comboJugador.options[0]) comboJugador.options[0].text = "Tria jugador"; 
+    if (comboJugador && comboJugador.options && comboJugador.options[0]) {
+      comboJugador.options[0].text = "Tria jugador"; 
+    }
     renderizarTablasCompletas();
     return;
   }
-  if (comboJugador && comboJugador.options[0]) comboJugador.options[0].text = "Esborrar";
+  
+  // Ajuste técnico: Mutamos el texto de la opción 0 a "Esborrar"
+  if (comboJugador && comboJugador.options && comboJugador.options[0]) {
+    comboJugador.options[0].text = "Esborrar";
+  }
+  
   if (!datosEquipoActual) return;
   
   var datosP = datosEquipoActual.principal;
   var datosS = datosEquipoActual.secundaria;
+  
+  // Localizar la columna de nombres en la cabecera (Fila 0)
   var colNomIndex = -1;
   if (datosP && datosP.length > 0) {
     for (var j = 0; j < datosP[0].length; j++) {
       var txtCab = datosP[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      if (txtCab.indexOf("NOM") > -1 || txtCab === "JUGADOR") { colNomIndex = j; break; }
+      if (txtCab.indexOf("NOM") > -1 || txtCab === "JUGADOR") { 
+        colNomIndex = j; 
+        break; 
+      }
     }
   }
+  
   if (colNomIndex === -1) return;
   
+  // Buscar la fila exacta del jugador seleccionado
   var filaJugadorIndex = -1;
   for (var i = 1; i < datosP.length; i++) {
-    if (datosP[i][colNomIndex].toString().trim() === miembroSeleccionado) { filaJugadorIndex = i; break; }
+    if (datosP[i][colNomIndex].toString().trim() === miembroSeleccionado) { 
+      filaJugadorIndex = i; 
+      break; 
+    }
   }
+  
   if (filaJugadorIndex === -1) return;
   
+  // Construcción de la tarjeta vertical
   var htmlFicha = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto;">';
   htmlFicha += '<table style="width: 100%; border-collapse: collapse;">';
   
+  // Datos de la Tabla Principal (C:I)
   if (datosP && datosP.length > 0) {
     for (var j = 0; j < datosP[0].length; j++) {
       var tituloCamp = datosP[0][j].toString().trim();
       var valorCamp = datosP[filaJugadorIndex][j].toString().trim();
       if (tituloCamp === "" || tituloCamp.toUpperCase().indexOf("BAIXES") > -1) continue; 
+      
       htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
       htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCamp + ':</td>';
       htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCamp + '</td>';
       htmlFicha += '</tr>';
     }
   }
+  
+  // Datos de la Tabla Secundaria (K)
   if (datosS && datosS.length > 0) {
     for (var j = 0; j < datosS[0].length; j++) {
       var tituloCampS = datosS[0][j].toString().trim();
       var valorCampS = datosS[filaJugadorIndex][j].toString().trim();
       if (tituloCampS === "" || tituloCampS.toUpperCase().indexOf("BAIXES") > -1) continue;
+      
       htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
       htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCampS + ':</td>';
       htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCampS + '</td>';
       htmlFicha += '</tr>';
     }
   }
+  
   htmlFicha += '</table></div>';
   document.getElementById('resultado').innerHTML = htmlFicha;
 }
+
 
 function generarEstructuraTabla(datos, idTabla, aplicarRoles) { 
   if (!datos || datos.length === 0) return ''; 
