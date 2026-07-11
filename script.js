@@ -173,7 +173,7 @@ function completarDatosFicha(nombreJugador) {
   var datosS = datosEquipoActual.secundaria;
   
   // Como sabemos que la columna de nombres es la segunda (Índice 1), la fijamos directamente
-  var colNom = 1; 
+  var colNom = 3; 
 
   // Buscamos en vertical qué fila coincide con el jugador seleccionado
   var filaIdx = -1;
