@@ -24,6 +24,9 @@ const ESCUDOS_EQUIPOS = {
 // Variable global interna para guardar los datos cargados del equipo actual
 let datosEquipoActual = null;
 
+// ==========================================
+// CÀRREGA INICIAL DE LA WEB
+// ==========================================
 window.onload = function() { 
   document.getElementById("imgTorneo").src = URL_LOGO_TORNEO; 
   fetch(`${URL_API}?accion=lista`)
@@ -35,7 +38,6 @@ window.onload = function() {
 function cambiarEscudo() { 
   var equipoSeleccionado = document.getElementById('equipo').value; 
   var imgEscudo = document.getElementById('escudoClub'); 
-  
   if (equipoSeleccionado && ESCUDOS_EQUIPOS[equipoSeleccionado]) { 
     imgEscudo.src = ESCUDOS_EQUIPOS[equipoSeleccionado]; 
     imgEscudo.style.display = "block"; 
@@ -61,7 +63,7 @@ function cargarSelector(equipos) {
 }
 
 // ==========================================
-// PARTE 2: BUSQUEDA I HISTÒRIAL DE JUGADORS
+// ENVIAMENT I RECEPCIÓ DE DADES DES DEL SHEETS
 // ==========================================
 function buscar() { 
   var equipo = document.getElementById('equipo').value; 
@@ -70,7 +72,6 @@ function buscar() {
     return; 
   } 
   document.getElementById('resultado').innerHTML = "<p class='cargando'>Buscant les dades...</p>"; 
-  
   fetch(`${URL_API}?accion=equipo&nombre=${encodeURIComponent(equipo)}`)
     .then(res => res.json())
     .then(procesarDatos)
@@ -84,13 +85,11 @@ function procesarDatos(resultadoBloques) {
     document.getElementById('resultado').innerHTML = "<p style='color:red; text-align:center;'>La fulla està buida o no s'ha trobat.</p>"; 
     return; 
   } 
-  
   datosEquipoActual = resultadoBloques;
   var datosPrincipal = resultadoBloques.principal;
   var columnaNomIndex = -1;
   var columnaRolIndex = -1;
   
-  // Localizar columnas en la cabecera (Fila 0)
   if (datosPrincipal && datosPrincipal.length > 0) {
     for (var j = 0; j < datosPrincipal[0].length; j++) {
       var textoCabecera = datosPrincipal[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -105,33 +104,25 @@ function procesarDatos(resultadoBloques) {
   if (columnaNomIndex !== -1) {
     var nombresMiembros = [];
     var ignorarRestoCombo = false;
-    
     for (var i = 1; i < datosPrincipal.length; i++) {
       var filaVacia = datosPrincipal[i].every(function(c) { return c.toString().trim() === ""; });
       if (filaVacia) continue;
-    
       if (columnaRolIndex !== -1) {
         var valorRol = datosPrincipal[i][columnaRolIndex].toString().trim().toLowerCase();
-        if (valorRol === "entrenador") {
-          ignorarRestoCombo = true; 
-        }
+        if (valorRol === "entrenador") { ignorarRestoCombo = true; }
       }
-    
       if (!ignorarRestoCombo) {
         var nombreValue = datosPrincipal[i][columnaNomIndex].toString().trim();
         if (nombreValue !== "") nombresMiembros.push(nombreValue);
       }
     }
-    
     nombresMiembros.sort(function(a, b) { return a.localeCompare(b); });
-    
     nombresMiembros.forEach(function(nom) {
       var opt = document.createElement('option');
       opt.value = nom;
       opt.text = nom;
       comboJugador.appendChild(opt);
     });
-    
     document.getElementById('bloqueJugador').style.display = "block";
   }
   renderizarTablasCompletas();
@@ -143,4 +134,130 @@ function renderizarTablasCompletas() {
   htmlFinal += "<div class='espacio-tablas'></div>"; 
   htmlFinal += generarEstructuraTabla(datosEquipoActual.secundaria, "tablaDatosSecundaria", false); 
   document.getElementById('resultado').innerHTML = htmlFinal;
+}
+
+// ==========================================
+// VISTA INTERACTIVA DE LA FITXA VERTICAL
+// ==========================================
+function detectarMiembro() {
+  var miembroSeleccionado = document.getElementById('jugador').value;
+  var comboJugador = document.getElementById('jugador');
+  if (!miembroSeleccionado) {
+    if (comboJugador && comboJugador.options[0]) comboJugador.options[0].text = "Tria jugador"; 
+    renderizarTablasCompletas();
+    return;
+  }
+  if (comboJugador && comboJugador.options[0]) comboJugador.options[0].text = "Esborrar";
+  if (!datosEquipoActual) return;
+  
+  var datosP = datosEquipoActual.principal;
+  var datosS = datosEquipoActual.secundaria;
+  var colNomIndex = -1;
+  if (datosP && datosP.length > 0) {
+    for (var j = 0; j < datosP[0].length; j++) {
+      var txtCab = datosP[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (txtCab.indexOf("NOM") > -1 || txtCab === "JUGADOR") { colNomIndex = j; break; }
+    }
+  }
+  if (colNomIndex === -1) return;
+  
+  var filaJugadorIndex = -1;
+  for (var i = 1; i < datosP.length; i++) {
+    if (datosP[i][colNomIndex].toString().trim() === miembroSeleccionado) { filaJugadorIndex = i; break; }
+  }
+  if (filaJugadorIndex === -1) return;
+  
+  var htmlFicha = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto;">';
+  htmlFicha += '<table style="width: 100%; border-collapse: collapse;">';
+  
+  if (datosP && datosP.length > 0) {
+    for (var j = 0; j < datosP[0].length; j++) {
+      var tituloCamp = datosP[0][j].toString().trim();
+      var valorCamp = datosP[filaJugadorIndex][j].toString().trim();
+      if (tituloCamp === "" || tituloCamp.toUpperCase().indexOf("BAIXES") > -1) continue; 
+      htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
+      htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCamp + ':</td>';
+      htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCamp + '</td>';
+      htmlFicha += '</tr>';
+    }
+  }
+  if (datosS && datosS.length > 0) {
+    for (var j = 0; j < datosS[0].length; j++) {
+      var tituloCampS = datosS[0][j].toString().trim();
+      var valorCampS = datosS[filaJugadorIndex][j].toString().trim();
+      if (tituloCampS === "" || tituloCampS.toUpperCase().indexOf("BAIXES") > -1) continue;
+      htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
+      htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCampS + ':</td>';
+      htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCampS + '</td>';
+      htmlFicha += '</tr>';
+    }
+  }
+  htmlFicha += '</table></div>';
+  document.getElementById('resultado').innerHTML = htmlFicha;
+}
+
+function generarEstructuraTabla(datos, idTabla, aplicarRoles) { 
+  if (!datos || datos.length === 0) return ''; 
+  
+  var html = '<div class="tabla-contenedor"><table id="' + idTabla + '">'; 
+  var indicesAutoCentrados = []; 
+  var cabeceraFila = datos[0]; 
+  
+  if (cabeceraFila && Array.isArray(cabeceraFila)) {
+    for (var j = 0; j < cabeceraFila.length; j++) { 
+      var nombreCabecera = cabeceraFila[j].toString().replace(/\s+/g, ' ').trim().toLowerCase(); 
+      if (nombreCabecera === "dorsal" || nombreCabecera === "data naixement" || nombreCabecera === "anys al club") { 
+        indicesAutoCentrados.push(j); 
+      } 
+    } 
+  }
+  
+  for (var i = 0; i < datos.length; i++) { 
+    var filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; }); 
+    if (filaVacia) continue; 
+    
+    var esEntrenador = false; 
+    if (aplicarRoles && i > 0) { 
+      for (var c = 0; c < datos[i].length; c++) { 
+        if (datos[i][c].toString().trim().toLowerCase() === "entrenador") { 
+          esEntrenador = true; 
+          break; 
+        } 
+      } 
+    } 
+    
+    var claseFila = (i === 0) ? 'class="cabecera"' : (esEntrenador ? 'class="fila-entrenador"' : ''); 
+    html += '<tr ' + claseFila + '>'; 
+    
+    for (var j = 0; j < datos[i].length; j++) { 
+      var valorCell = datos[i][j].toString().trim(); 
+      var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : ''; 
+      
+      if (i === 0) { 
+        html += '<th>' + valorCell + '</th>'; 
+      } else { 
+        if (aplicarRoles && !esEntrenador) { 
+          var textoMinuscula = valorCell.toLowerCase(); 
+          if (textoMinuscula === "porter") claseCelda = 'class="rol-porter"'; 
+          else if (textoMinuscula === "defensa") claseCelda = 'class="rol-defensa"'; 
+          else if (textoMinuscula === "migcampista") claseCelda = 'class="rol-migcampista"'; 
+          else if (textoMinuscula === "davanter") claseCelda = 'class="rol-davanter"'; 
+          else if (indicesAutoCentrados.includes(j)) claseCelda = 'class="col-auto-centrada"'; 
+        } else if (indicesAutoCentrados.includes(j)) { 
+          claseCelda = 'class="col-auto-centrada"'; 
+        } 
+        html += '<td ' + claseCelda + '>' + valorCell + '</td>'; 
+      } 
+    } 
+    html += '</tr>'; 
+    
+    if (aplicarRoles && esEntrenador) { 
+      html += '<tr class="fila-separadora">'; 
+      for (var k = 0; k < datos[i].length; k++) html += '<td></td>'; 
+      html += '</tr>'; 
+    } 
+  } 
+  
+  html += '</table></div>'; 
+  return html; 
 }
