@@ -168,6 +168,56 @@ function detectarMiembro() {
   document.getElementById('resultado').innerHTML = htmlFicha;
 }
 
+function completarDatosFicha(nombreJugador) {
+  if (!datosEquipoActual) return;
+  var datosP = datosEquipoActual.principal;
+  var datosS = datosEquipoActual.secundaria;
+  
+  // Buscar la columna del nombre en la fila 0
+  var colNom = -1;
+  for (var j = 0; j < datosP[0].length; j++) {
+    var txt = datosP[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (txt.indexOf("NOM") > -1 || txt === "JUGADOR") { colNom = j; break; }
+  }
+  if (colNom === -1) return;
+
+  // Buscar la fila del jugador
+  var filaIdx = -1;
+  for (var i = 1; i < datosP.length; i++) {
+    if (datosP[i][colNom].toString().trim() === nombreJugador) { filaIdx = i; break; }
+  }
+  if (filaIdx === -1) return;
+
+  // Construir las líneas verticales de datos
+  var tablaHtml = '<table style="width: 100%; border-collapse: collapse;">';
+  
+  // Añadir datos de la tabla principal (C:I)
+  for (var j = 0; j < datosP[0].length; j++) {
+    var tit = datosP[0][j].toString().trim();
+    var val = datosP[filaIdx][j].toString().trim();
+    if (tit === "" || tit.toUpperCase().indexOf("BAIXES") > -1) continue;
+    
+    tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
+    tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tit + ':</td>';
+    tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px;">' + val + '</td>';
+    tablaHtml += '</tr>';
+  }
+  
+  // Añadir datos de la tabla secundaria (K)
+  for (var j = 0; j < datosS[0].length; j++) {
+    var titS = datosS[0][j].toString().trim();
+    var valS = datosS[filaIdx][j].toString().trim();
+    if (titS === "" || titS.toUpperCase().indexOf("BAIXES") > -1) continue;
+    
+    tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
+    tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + titS + ':</td>';
+    tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valS + '</td>';
+    tablaHtml += '</tr>';
+  }
+  
+  tablaHtml += '</table>';
+  document.getElementById('datosFicha').innerHTML = tablaHtml;
+}
 
 
 // ==========================================
