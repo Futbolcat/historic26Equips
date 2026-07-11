@@ -51,7 +51,10 @@ function cambiarEscudo() {
     imgEscudo.style.display = "block"; 
   } else { 
     imgEscudo.style.display = "none"; 
-  } 
+  }
+  document.getElementById('bloqueJugador').style.display = "none";
+  document.getElementById('resultado').innerHTML = "";
+  datosEquipoActual = null;
 }
 
 // OMPLIR EL DESPLEGABLE AMB ELS EQUIPS REALS
@@ -100,26 +103,21 @@ function procesarDatos(resultadoBloques) {
   
   datosEquipoActual = resultadoBloques;
   var datosPrincipal = resultadoBloques.principal;
-  var cabeceraOpciones = datosPrincipal[0]; 
-  
-  // 1. Localizar la columna que se llama exactamente "NOM" en la cabecera (Fila 0)
   var columnaNomIndex = -1;
   var columnaRolIndex = -1;
-  if (cabeceraOpciones && Array.isArray(cabeceraOpciones)) {
-    for (var j = 0; j < cabeceraOpciones.length; j++) {
-      var textoCabecera = cabeceraOpciones[j].toString().trim().toUpperCase();
-      textoCabecera = textoCabecera.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      if (textoCabecera.indexOf("NOM") > -1 || textoCabecera === "JUGADOR") {
-        columnaNomIndex = j;
-      }
-      if (textoCabecera.indexOf("DEMARCACIO") > -1 || textoCabecera.indexOf("ROL") > -1 || textoCabecera.indexOf("POSICIO") > -1) {
-        columnaRolIndex = j;
-      }
+  
+  // 1. Localizar la columna que se llama exactamente "NOM" en la cabecera (Fila 0)
+  if (datosPrincipal && datosPrincipal.length > 0) {
+    for (var j = 0; j < datosPrincipal[0].length; j++) {
+      var textoCabecera = datosPrincipal[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (textoCabecera.indexOf("NOM") > -1 || textoCabecera === "JUGADOR") columnaNomIndex = j;
+      if (textoCabecera.indexOf("DEMARCACIO") > -1 || textoCabecera.indexOf("ROL") > -1 || textoCabecera.indexOf("POSICIO") > -1) columnaRolIndex = j;
     }
   }
+
   // 2. Extraer los nombres de los jugadores si la columna existe
   var comboJugador = document.getElementById('jugador');
-  comboJugador.innerHTML = '<option value="">Tria membre</option>';
+  comboJugador.innerHTML = '<option value="">Tria jugador</option>';
   
   if (columnaNomIndex !== -1) {
     var nombresMiembros = [];
@@ -178,15 +176,15 @@ function detectarMiembro() {
   
   // Si el usuario selecciona "Esborrar" o la opción vacía, restauramos todo
   if (!miembroSeleccionado) {
-    if (comboJugador.options[0]) {
-      comboJugador.options[0].text = "Tria membre"; // El texto vuelve a su estado original neutro
+    if (comboJugador.options && comboJugador.options[0]) {
+      comboJugador.options[0].text = "Tria jugador"; // El texto vuelve a su estado original neutro
     }
     renderizarTablasCompletas();
     return;
   }
 
   // Ajuste técnico: Cambiamos de forma estricta el texto del primer elemento (índice 0) a "Esborrar"
-  if (comboJugador.options[0]) {
+  if (comboJugador.options && comboJugador.options[0]) {
     comboJugador.options[0].text = "Esborrar";
   }
   
@@ -195,7 +193,6 @@ function detectarMiembro() {
   var datosP = datosEquipoActual.principal;
   var datosS = datosEquipoActual.secundaria;
   var cabeceraP = datosP[0];
-  var cabeceraS = datosS[0];
   
   // 1. Encontrar en qué columna de la tabla principal está el nombre
   var colNomIndex = -1;
@@ -234,17 +231,20 @@ function detectarMiembro() {
     htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCamp + '</td>';
     htmlFicha += '</tr>';
   }
-  var cabeceraS = datosS[0]; // Acceso correcto a la cabecera secundaria
-  // Procesar campos de la Tabla Secundaria (K) hacia abajo en la misma ficha
-  for (var j = 0; j < cabeceraS.length; j++) {
-    var tituloCampS = cabeceraS[j].toString().trim();
-    var valorCampS = datosS[filaJugadorIndex][j].toString().trim();
-    if (tituloCampS === "" || tituloCampS.toUpperCase().indexOf("BAIXES") > -1) continue;
-    
-    htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
-    htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCampS + ':</td>';
-    htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCampS + '</td>';
-    htmlFicha += '</tr>';
+  
+  // Processar columnes de la Taula Secundària (K)
+  if (datosS && datosS.length > 0) {
+    var cabeceraS = datosS[0]; // Accés correcte a la línia de títols secundària
+    for (var j = 0; j < cabeceraS.length; j++) {
+      var tituloCampS = cabeceraS[j].toString().trim();
+      var valorCampS = datosS[filaJugadorIndex][j].toString().trim();
+      if (tituloCampS === "" || tituloCampS.toUpperCase().indexOf("BAIXES") > -1) continue;
+      
+      htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
+      htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCampS + ':</td>';
+      htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCampS + '</td>';
+      htmlFicha += '</tr>';
+    }
   }
   
   htmlFicha += '</table></div>';
