@@ -35,7 +35,7 @@ window.onload = function() {
   fetch(`${URL_API}?accion=lista`)
     .then(res => res.json())
     .then(cargarSelector)
-    .catc(err => console.error("Error carregant la llista:", err)); 
+    .catch(err => console.error("Error carregant la llista:", err)); 
 };
 
 // ==========================================
