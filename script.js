@@ -146,7 +146,7 @@ function detectarMiembro() {
   
   // Si es selecciona "Esborrar" o la opció buida, restaurem les taules horitzontals
   if (!miembroSeleccionado) {
-    if (comboJugador && comboJugador.options && comboJugador.options[0]) {
+    if (comboJugador && comboJugador.options) {
       comboJugador.options[0].text = "Tria jugador"; 
     }
     renderizarTablasCompletas();
@@ -154,7 +154,7 @@ function detectarMiembro() {
   }
   
   // Canviem el text de la primera opció del desplegable a "Esborrar"
-  if (comboJugador && comboJugador.options && comboJugador.options[0]) {
+  if (comboJugador && comboJugador.options) {
     comboJugador.options[0].text = "Esborrar";
   }
   
