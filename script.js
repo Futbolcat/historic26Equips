@@ -106,7 +106,7 @@ function procesarDatos(resultadoBloques) {
   var columnaNomIndex = -1;
   var columnaRolIndex = -1;
   
-  // 1. Localizar la columna que se llama exactamente "NOM" en la cabecera (Fila 0)
+  // 1. Localització de les columnes de Nom i Rol a la cabecera
   if (datosPrincipal && datosPrincipal.length > 0) {
     for (var j = 0; j < datosPrincipal[0].length; j++) {
       var textoCabecera = datosPrincipal[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -115,36 +115,40 @@ function procesarDatos(resultadoBloques) {
     }
   }
 
-  // 2. Extraer los nombres de los jugadores si la columna existe
+  // 2. Neteja del desplegable de jugadors
   var comboJugador = document.getElementById('jugador');
   comboJugador.innerHTML = '<option value="">Tria jugador</option>';
   
   if (columnaNomIndex !== -1) {
     var nombresMiembros = [];
+    var ignorarRestoCombo = false;
     
-    // Empezamos en i = 1 para saltarnos los títulos
+    // Recorrem les files de la plantilla
     for (var i = 1; i < datosPrincipal.length; i++) {
       var filaVacia = datosPrincipal[i].every(function(c) { return c.toString().trim() === ""; });
       if (filaVacia) continue;
     
-      // FILTRO ESTRICTO: Si encontramos al entrenador en su columna correspondiente, paramos el bucle por completo
+      // Control de seguretat: Si detectem l'entrenador, activem l'interruptor
       if (columnaRolIndex !== -1) {
         var valorRol = datosPrincipal[i][columnaRolIndex].toString().trim().toLowerCase();
         if (valorRol === "entrenador") {
-          continue; // Detiene la lectura de filas; ignora al entrenador y todo lo que esté debajo
+          ignorarRestoCombo = true; 
         }
       }
     
-      var nombreValue = datosPrincipal[i][columnaNomIndex].toString().trim();
-      if (nombreValue !== "") {
-        nombresMiembros.push(nombreValue);
+      // Només afegim el nom al desplegable si l'interruptor està apagat (abans de l'entrenador)
+      if (!ignorarRestoCombo) {
+        var nombreValue = datosPrincipal[i][columnaNomIndex].toString().trim();
+        if (nombreValue !== "") {
+          nombresMiembros.push(nombreValue);
+        }
       }
     }
     
-    // ORDENAR ALFABÉTICAMENTE los nombres obtenidos
+    // Ordenem la llista de jugadors alfabèticament
     nombresMiembros.sort(function(a, b) { return a.localeCompare(b); });
     
-    // Insertar los nombres ordenados en el menú desplegable
+    // Injectem els jugadors reals al menú de la web
     nombresMiembros.forEach(function(nom) {
       var opt = document.createElement('option');
       opt.value = nom;
@@ -152,11 +156,11 @@ function procesarDatos(resultadoBloques) {
       comboJugador.appendChild(opt);
     });
     
-    // Desplazar visualmente los controles e iluminar el nuevo menú a la derecha
     document.getElementById('bloqueJugador').style.display = "block";
   }
   renderizarTablasCompletas();
 }
+
 
 // FUNCIÓN PARA VOLVER A PINTAR LAS TABLAS ORIGINALES HORIZONTALES
 function renderizarTablasCompletas() {
