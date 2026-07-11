@@ -3,8 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="https://gstatic.com">
+    
+    <!-- FAVICON CORREGIDO CON IMAGEN REAL COMPATIBLE -->
+    <link rel="icon" type="image/png" href="https://wikimedia.org">
     <title>Històrics26 - Equips</title>
+    
     <style>
       body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 12px; background-color: #f5f7fa; color: #333; margin: 0; font-size: 17px; }
       .contenedor { max-width: 1200px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -20,11 +23,16 @@
       th, td { border: 1px solid #dcdcdc; padding: 14px 16px; text-align: left; font-size: 16px; white-space: nowrap; }
       th { background-color: #2c3e50; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; }
       .col-auto-centrada { width: 1%; text-align: center !important; white-space: nowrap; } 
+      
+      /* COLORES DE ROLES EN CELDAS (PARA JUGADORES) */
       .rol-porter { background-color: #e8f5e9 !important; color: #1b5e20; font-weight: bold; }        
       .rol-defensa { background-color: #e3f2fd !important; color: #0d47a1; font-weight: bold; }       
       .rol-migcampista { background-color: #fff3e0 !important; color: #e65100; font-weight: bold; }   
       .rol-davanter { background-color: #ffebee !important; color: #b71c1c; font-weight: bold; }      
-      .rol-entrenador { background-color: #f3e5f5 !important; color: #4a148c; font-weight: bold; }    
+      
+      /* CAMBIO NUEVO: COLOR PARA TODA LA FILA DEL ENTRENADOR */
+      .fila-entrenador td { background-color: #f3e5f5 !important; color: #4a148c; font-weight: bold; }    
+      
       .fila-separadora { height: 25px; background-color: transparent !important; }
       .fila-separadora td { border: none !important; background: transparent !important; padding: 0 !important; }
       @media (min-width: 600px) {
@@ -49,8 +57,8 @@
     </div>
 
     <script>
-      // ENLACE DE TU API DE GOOGLE APPS SCRIPT
-      const URL_API = "https://script.google.com/macros/s/AKfycbzggpYvXbcCjXahfxqatcq0FYE_FjYVayUYs5RYD0-QsHVooxVAcsQoHCs4m-OMEJP7EA/exec";
+      // RECUERDA VOLVER A PEGAR TU ENLACE DE GOOGLE DEBAJO
+      const URL_API = "PON_AQUI_TU_URL_DE_GOOGLE_APPS_SCRIPT";
 
       window.onload = function() {
         fetch(`${URL_API}?accion=lista`)
@@ -115,8 +123,22 @@
         for (var i = 0; i < datos.length; i++) {
           var filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; });
           if (filaVacia) continue;
-          html += '<tr>';
+          
           var esEntrenador = false;
+          
+          // Verificar primero si en la fila de datos está el entrenador
+          if (aplicarRoles && i > 0) {
+            for (var c = 0; c < datos[i].length; c++) {
+              if (datos[i][c].toString().trim().toLowerCase() === "entrenador") {
+                esEntrenador = true;
+                break;
+              }
+            }
+          }
+
+          // Asignar clase especial a toda la fila si es entrenador
+          var claseFila = (i === 0) ? 'class="cabecera"' : (esEntrenador ? 'class="fila-entrenador"' : '');
+          html += '<tr ' + claseFila + '>';
 
           for (var j = 0; j < datos[i].length; j++) {
             var valorCelda = datos[i][j].toString().trim();
@@ -125,13 +147,12 @@
             if (i === 0) {
               html += '<th ' + claseCelda + '>' + valorCelda + '</th>';
             } else {
-              if (aplicarRoles) {
+              if (aplicarRoles && !esEntrenador) { // Colores individuales de celda solo si no es entrenador
                 var textoMinuscula = valorCelda.toLowerCase();
                 if (textoMinuscula === "porter") claseCelda = 'class="rol-porter"';
                 else if (textoMinuscula === "defensa") claseCelda = 'class="rol-defensa"';
                 else if (textoMinuscula === "migcampista") claseCelda = 'class="rol-migcampista"';
                 else if (textoMinuscula === "davanter") claseCelda = 'class="rol-davanter"';
-                else if (textoMinuscula === "entrenador") { claseCelda = 'class="rol-entrenador"'; esEntrenador = true; }
                 else if (indicesAutoCentrados.includes(j)) { claseCelda = 'class="col-auto-centrada"'; }
               } else if (indicesAutoCentrados.includes(j)) {
                 claseCelda = 'class="col-auto-centrada"';
@@ -140,6 +161,7 @@
             }
           }
           html += '</tr>';
+          
           if (aplicarRoles && esEntrenador) {
             html += '<tr class="fila-separadora">';
             for (var k = 0; k < datos[i].length; k++) html += '<td></td>';
