@@ -202,16 +202,20 @@ function completarDatosFicha(nombreJugador) {
   }
   
   // 2. Añadimos los datos de la Tabla Secundaria (K)
-  for (var j = 0; j < datosS.length; j++) {
-    var titS = datosS[j].toString().trim();
-    var valS = datosS[filaIdx][j].toString().trim();
-    if (titS === "" || titS.toUpperCase().indexOf("BAIXES") > -1) continue;
+    // 2. Añadimos los datos de la Tabla Secundaria (K) - Acceso directo a la columna única
+  if (datosS && datosS.length > 0 && datosS[0]) {
+    var titS = datosS[0].toString().trim();
+    var valS = datosS[filaIdx][0].toString().trim();
     
-    tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
-    tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 40%; font-size: 15px; text-transform: uppercase; white-space: normal; word-break: break-word;">' + titS + ':</td>';
-    tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px; white-space: normal; word-break: break-word;">' + valS + '</td>';
-    tablaHtml += '</tr>';
+    // Filtro de seguridad por si la columna K se llama o contiene "BAIXES"
+    if (titS !== "" && titS.toUpperCase().indexOf("BAIXES") === -1) {
+      tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
+      tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 40%; font-size: 15px; text-transform: uppercase; white-space: normal; word-break: break-word;">' + titS + ':</td>';
+      tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px; white-space: normal; word-break: break-word;">' + valS + '</td>';
+      tablaHtml += '</tr>';
+    }
   }
+
 
   
   tablaHtml += '</table>';
