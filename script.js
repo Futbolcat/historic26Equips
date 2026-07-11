@@ -189,20 +189,23 @@ function completarDatosFicha(nombreJugador) {
   var tablaHtml = '<table style="width: 100%; border-collapse: collapse;">';
   
   // 1. Añadimos los datos de la Tabla Principal (C:I)
-  for (var j = 0; j < datosP.length; j++) {
-    var tit = datosP[j].toString().trim();
-    var val = datosP[filaIdx][j].toString().trim();
-    if (tit === "" || tit.toUpperCase().indexOf("BAIXES") > -1) continue;
-    
-    tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
-    tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 40%; font-size: 15px; text-transform: uppercase; white-space: normal; word-break: break-word;">' + tit + ':</td>';
-    // white-space: normal permite que el texto largo salte de línea en el móvil de forma limpia
-    tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px; white-space: normal; word-break: break-word;">' + val + '</td>';
-    tablaHtml += '</tr>';
+  // Usamos datosP[0].length para contar estrictamente el número de columnas horizontales
+  if (datosP && datosP.length > 0) {
+    for (var j = 0; j < datosP[0].length; j++) {
+      var tit = datosP[0][j].toString().trim();
+      var val = datosP[filaIdx][j].toString().trim();
+      
+      if (tit === "" || tit.toUpperCase().indexOf("BAIXES") > -1) continue;
+      
+      tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
+      tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 40%; font-size: 15px; text-transform: uppercase; white-space: normal; word-break: break-word;">' + tit + ':</td>';
+      tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px; white-space: normal; word-break: break-word;">' + val + '</td>';
+      tablaHtml += '</tr>';
+    }
   }
+
   
   // 2. Añadimos los datos de la Tabla Secundaria (K)
-    // 2. Añadimos los datos de la Tabla Secundaria (K) - Acceso directo a la columna única
   if (datosS && datosS.length > 0 && datosS[0]) {
     var titS = datosS[0].toString().trim();
     var valS = datosS[filaIdx][0].toString().trim();
