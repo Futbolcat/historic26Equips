@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Football_%28soccer_ball%29.svg">
+    <link rel="icon" type="image/svg+xml" href="https://wikimedia.org">
     <title>Històrics26 - Equips</title>
     <style>
       body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 12px; background-color: #f5f7fa; color: #333; margin: 0; font-size: 17px; }
@@ -12,19 +12,24 @@
       h2 { color: #1a73e8; margin: 0; font-size: 24px; text-align: left; }
       .logo-torneo { height: 60px; width: auto; object-fit: contain; }
       .espacio-tablas { margin-top: 30px; }
-      .controles { margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+      
+      /* CONTROLES EN FILA QUE SE ADAPTAN AUTOMÁTICAMENTE */
+      .controles { margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center; justify-content: flex-start; width: 100%; }
       .selector-bloque { display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; }
       .escudo-club { height: 50px; width: 50px; object-fit: contain; display: none; }
+      
       select { padding: 14px; font-size: 18px; border: 2px solid #ccc; border-radius: 6px; background: white; flex-grow: 1; box-sizing: border-box; width: 100%; }
       button { padding: 14px; font-size: 18px; background-color: #1a73e8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; box-sizing: border-box; }
       button:hover { background-color: #1557b0; }
+      
+      /* CONTENEDOR NUEVO OCULTO PARA EL SEGUNDO COMBOBO */
+      .bloque-jugador { display: none; width: 100%; box-sizing: border-box; }
+      
       .cargando { color: #666; font-style: italic; margin-top: 15px; font-size: 17px; text-align: center; }
       .tabla-contenedor { margin-top: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #dcdcdc; border-radius: 6px; }
       table { border-collapse: collapse; width: 100%; background: white; table-layout: auto; }
       th, td { border: 1px solid #dcdcdc; padding: 14px 16px; text-align: left; font-size: 16px; white-space: nowrap; }
-      /* CAMBIO: TODAS LAS CABECERAS CENTRADAS POR DEFECTO */
       th { background-color: #2c3e50; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; }
-      /* CLASE PARA AJUSTAR Y CENTRAR EN VERTICAL EL CONTENIDO */
       .col-auto-centrada { width: 1%; text-align: center !important; white-space: nowrap; } 
       .rol-porter { background-color: #e8f5e9 !important; color: #1b5e20; font-weight: bold; }        
       .rol-defensa { background-color: #e3f2fd !important; color: #0d47a1; font-weight: bold; }       
@@ -33,18 +38,19 @@
       .fila-entrenador td { background-color: #f3e5f5 !important; color: #4a148c; font-weight: bold; }    
       .fila-separadora { height: 25px; background-color: transparent !important; }
       .fila-separadora td { border: none !important; background: transparent !important; padding: 0 !important; }
+      
       @media (min-width: 600px) {
         body { padding: 30px; font-size: 15px; }
         .contenedor { padding: 25px; }
-        .controles { flex-direction: row; justify-content: center; }
-        .selector-bloque { width: auto; min-width: 350px; }
+        .controles { flex-direction: row; justify-content: flex-start; flex-wrap: wrap; }
+        .selector-bloque { width: auto; min-width: 320px; }
+        .bloque-jugador { width: auto; min-width: 280px; }
         button { width: auto; padding: 10px 25px; font-size: 16px; }
         th, td { padding: 10px 14px; font-size: 14px; }
         h2 { font-size: 26px; }
         .logo-torneo { height: 80px; }
       }
     </style>
-
   </head>
   <body>
     <div class="contenedor">
@@ -52,6 +58,7 @@
         <h2>Consulta de plantilles d'equips</h2>
         <img id="imgTorneo" class="logo-torneo" src="" alt="Torneig">
       </div>
+      
       <div class="controles">
         <div class="selector-bloque">
           <img id="escudoClub" class="escudo-club" src="" alt="Escut">
@@ -60,11 +67,18 @@
           </select>
         </div>
         <button onclick="buscar()">Cerca</button>
+        
+        <!-- SEGUNDO MENÚ DESPLEGABLE CON LOS NOMBRES -->
+        <div id="bloqueJugador" class="bloque-jugador">
+          <select id="jugador" onchange="detectarMiembro()">
+            <option value="">Tria membre</option>
+          </select>
+        </div>
       </div>
+      
       <div id="resultado"></div>
     </div>
-
-    <!-- LLAMADA AL NUEVO ARCHIVO DE SCRIPT COMPRIMIDO -->
     <script src="script.js"></script>
   </body>
 </html>
+
