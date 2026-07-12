@@ -130,12 +130,12 @@ function procesarDatos(resultadoBloques) {
 
 function renderizarTablasCompletas() {
   if (!datosEquipoActual) return;
-  var htmlFinal = generarEstructuraTabla(datosEquipoActual.principal, "tablaDatosPrincipal", true, datosEquipoActual.coloresP, false); 
+  var htmlFinal = generarEstructuraTabla(datosEquipoActual.principal, "tablaDatosPrincipal", true, datosEquipoActual.coloresP); 
   htmlFinal += "<div class='espacio-tablas'></div>"; 
-  // Indicamos con el último parámetro (true) que la tabla secundaria maneja HTML directo
-  htmlFinal += generarEstructuraTabla(datosEquipoActual.secundariaHTML, "tablaDatosSecundaria", false, null, true); 
+  htmlFinal += generarEstructuraTabla(datosEquipoActual.secundaria, "tablaDatosSecundaria", false, datosEquipoActual.coloresS); 
   document.getElementById('resultado').innerHTML = htmlFinal;
 }
+
 
 // ==========================================
 // VISTA INTERACTIVA DE LA FITXA VERTICAL
@@ -169,7 +169,8 @@ function detectarMiembro() {
 function completarDatosFicha(nombreJugador) {
   if (!datosEquipoActual) return;
   var datosP = datosEquipoActual.principal;
-  var datosS = datosEquipoActual.secundariaHTML; // <-- Actualizado al nuevo paquete multicolor
+  var datosS = datosEquipoActual.secundaria;
+  var coloresS = datosEquipoActual.coloresS;
   
   var colNom = 3; 
   var filaIdx = -1;
@@ -183,7 +184,7 @@ function completarDatosFicha(nombreJugador) {
 
   var tablaHtml = '<table style="width: 100%; border-collapse: collapse;">';
   
-  // 1. Líneas de la Tabla Principal (C:I)
+  // 1. Líneas de la Tabla Principal (C:I) hacia abajo
   if (datosP && datosP.length > 0) {
     for (var j = 0; j < datosP.length; j++) {
       var tit = datosP[j].toString().trim();
@@ -197,16 +198,23 @@ function completarDatosFicha(nombreJugador) {
     }
   }
   
-  // 2. Línea de la Tabla Secundaria (K - Baixes) con soporte multicolor
+  // 2. Línea de la Tabla Secundaria (K - Baixes) con color unificado corregido
   if (datosS && datosS.length > 0 && datosS[filaIdx]) {
     var titS = datosS.toString().trim();
     var valS = datosS[filaIdx].toString().trim();
     
     if (titS !== "" && titS.toUpperCase().indexOf("BAIXES") === -1) {
+      var estiloColorK = "";
+      if (coloresS && coloresS[filaIdx] && coloresS[filaIdx]) {
+        var colKGoogle = coloresS[filaIdx].toString().trim();
+        if (colKGoogle !== "#000000" && colKGoogle !== "") {
+          estiloColorK = 'style="color: ' + colKGoogle + ' !important;"';
+        }
+      }
+      
       tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
       tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 40%; font-size: 15px; text-transform: uppercase; white-space: normal; word-break: break-word;">' + titS + ':</td>';
-      // Inyectamos el valor como HTML para renderizar los múltiples colores de la celda
-      tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px; white-space: normal; word-break: break-word;">' + valS + '</td>';
+      tablaHtml += '<td style="padding: 10px; font-size: 16px; white-space: normal; word-break: break-word;" ' + estiloColorK + '>' + valS + '</td>';
       tablaHtml += '</tr>';
     }
   }
