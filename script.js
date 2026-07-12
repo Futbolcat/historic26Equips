@@ -203,7 +203,6 @@ function completarDatosFicha(nombreJugador) {
       tablaHtml += '</tr>';
     }
   }
-
   
   // 2. Añadimos los datos de la Tabla Secundaria (K)
   if (datosS && datosS.length > 0 && datosS[0]) {
@@ -225,9 +224,6 @@ function completarDatosFicha(nombreJugador) {
   // Inyectamos los datos limpios dentro de la tarjeta gris
   document.getElementById('datosFicha').innerHTML = tablaHtml;
 }
-
-
-
 
 // ==========================================
 // GENERAR TAULA CAMB DADES
@@ -305,21 +301,25 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
   return html; 
 }
 
-
 // ==========================================
 // NUEVA PANTALLA: CERCADOR JUGADORS SUB23
 // ==========================================
 function buscarSub23() {
   document.getElementById('resultado').innerHTML = "<p class='cargando'>Buscant tots els jugadors SUB23 a les plantilles...</p>";
   
-  // Amaguem el combo de jugadors per netejar la vista de dalt
+  // 1. Blanquear el desplegable de equipos y el de jugadores
+  document.getElementById('equipo').value = "";
   document.getElementById('bloqueJugador').style.display = "none";
   
+  // 2. Ocultar el escudo del club que estuviera en pantalla
+  document.getElementById('escudoClub').style.display = "none";
+  
+  // 3. Lanzar la petición al servidor de Google Sheets
   fetch(`${URL_API}?accion=sub23`)
     .then(res => res.json())
     .then(mostrarTablaSub23)
     .catch(err => {
-      document.getElementById('resultado').innerHTML = "<p style='color:red; text-align:center;'>Error de connexió al cercar SUB23.</p>";
+      document.getElementById('resultado').innerHTML = "<p style='color:red; text-align:center;'>Error de connexió al cercar Sub23.</p>";
     });
 }
 
