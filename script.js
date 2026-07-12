@@ -317,7 +317,7 @@ function buscarSub23() {
 
 function mostrarTablaSub23(listaSub23) {
   if (!listaSub23 || listaSub23.length === 0) {
-    document.getElementById('resultado').innerHTML = "<p style='color:orange; text-align:center;'>No s'ha trobat cap jugador nascut després del 31/12/2022.</p>";
+    document.getElementById('resultado').innerHTML = "<p style='color:orange; text-align:center;'>No s'ha trobat cap jugador nascut després del 01/01/2003.</p>";
     return;
   }
   
