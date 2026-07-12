@@ -329,7 +329,9 @@ function mostrarTablaSub23(listaSub23) {
     var equipoNom = listaSub23[i].equipo;
     var nombre = listaSub23[i].nombre;
     var fecha = listaSub23[i].fecha;
-    
+
+    // Control de seguridad: Limpiamos espacios para cruzarlo con tu diccionario de 12 escudos
+    var equipoLimpio = equipoNom ? equipoNom.toString().trim() : "";
     // Buscamos si tenemos el enlace del escudo de este club en tu diccionario de arriba
     var urlEscudo = ESCUDOS_EQUIPOS[equipoNom] || "https://wikimedia.org";
     
