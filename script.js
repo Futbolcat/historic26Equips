@@ -267,12 +267,17 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
       var valorCell = datos[i][j].toString().trim(); 
       var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : ''; 
       
-      // NUEVO: Extraer el color de texto de la celda si viene del Sheets (ignora la fila 0 de títulos)
       var estiloColorInline = "";
       if (i > 0 && matrizColores && matrizColores[i] && matrizColores[i][j]) {
         var colorGoogle = matrizColores[i][j].toString().trim();
-        // Solo aplicamos si el color no es el negro estándar (#000000) para no sobreescribir los roles
-        if (colorGoogle !== "#000000" && colorGoogle !== "") {
+        
+        // CORRECCIÓN: Buscamos el nombre de la cabecera actual para aplicar el filtro estricto
+        var tituloColumnaActual = cabeceraFila && cabeceraFila[j] ? cabeceraFila[j].toString().trim().toUpperCase() : "";
+        
+        // FILTRO EXCLUSIVO: Solo permitimos el color si es la columna "NOM FUTBOL" o si estamos en la tabla secundaria (K) de baixes
+        var esColumnaPermitida = (tituloColumnaActual.indexOf("NOM FUTBOL") > -1 || idTabla === "tablaDatosSecundaria");
+        
+        if (esColumnaPermitida && colorGoogle !== "#000000" && colorGoogle !== "") {
           estiloColorInline = 'style="color: ' + colorGoogle + ' !important;"';
         }
       }
@@ -290,7 +295,6 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
         } else if (indicesAutoCentrados.includes(j)) { 
           claseCelda = 'class="col-auto-centrada"'; 
         } 
-        // Inyectamos el estilo de color inline si existe para esa celda
         html += '<td ' + claseCelda + ' ' + estiloColorInline + '>' + valorCell + '</td>'; 
       } 
     } 
@@ -304,6 +308,7 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
   html += '</table></div>'; 
   return html; 
 }
+
 
 
 // ==========================================
