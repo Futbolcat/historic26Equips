@@ -130,13 +130,12 @@ function procesarDatos(resultadoBloques) {
 
 function renderizarTablasCompletas() {
   if (!datosEquipoActual) return;
-  // Pasamos los textos y sus respectivos colores a cada tabla
-  var htmlFinal = generarEstructuraTabla(datosEquipoActual.principal, "tablaDatosPrincipal", true, datosEquipoActual.coloresP); 
+  var htmlFinal = generarEstructuraTabla(datosEquipoActual.principal, "tablaDatosPrincipal", true, datosEquipoActual.coloresP, false); 
   htmlFinal += "<div class='espacio-tablas'></div>"; 
-  htmlFinal += generarEstructuraTabla(datosEquipoActual.secundaria, "tablaDatosSecundaria", false, datosEquipoActual.coloresS); 
+  // Indicamos con el último parámetro (true) que la tabla secundaria maneja HTML directo
+  htmlFinal += generarEstructuraTabla(datosEquipoActual.secundariaHTML, "tablaDatosSecundaria", false, null, true); 
   document.getElementById('resultado').innerHTML = htmlFinal;
 }
-
 
 // ==========================================
 // VISTA INTERACTIVA DE LA FITXA VERTICAL
@@ -231,11 +230,13 @@ function completarDatosFicha(nombreJugador) {
 // GENERAR TAULA CAMB DADES
 // ==========================================
 
-function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) { 
+function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores, esHTML) { 
   if (!datos || datos.length === 0) return ''; 
   var html = '<div class="tabla-contenedor"><table id="' + idTabla + '">'; 
   var indicesAutoCentrados = []; 
-  var cabeceraFila = datos[0]; 
+  
+  // En la tabla secundaria, los datos vienen como lista simple, por lo que su cabecera es el elemento 0
+  var cabeceraFila = (idTabla === "tablaDatosSecundaria") ? datos : (datos && datos.length > 0 ? datos[0] : null);
   
   if (cabeceraFila && Array.isArray(cabeceraFila)) {
     for (var j = 0; j < cabeceraFila.length; j++) { 
@@ -250,11 +251,18 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
   
   for (var i = 0; i < datos.length; i++) { 
     if (aplicarRoles && pararDespuesDeEntrenador) break;
-    var filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; }); 
+    
+    // Control de salto para filas vacías según la estructura del array
+    var filaVacia = false;
+    if (idTabla === "tablaDatosSecundaria") {
+      filaVacia = (datos[i].toString().trim() === "");
+    } else {
+      filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; });
+    }
     if (filaVacia) continue; 
     
     var esEntrenador = false; 
-    if (aplicarRoles && i > 0) { 
+    if (aplicarRoles && i > 0 && Array.isArray(datos[i])) { 
       for (var c = 0; c < datos[i].length; c++) { 
         if (datos[i][c].toString().trim().toLowerCase() === "entrenador") { esEntrenador = true; pararDespuesDeEntrenador = true; break; } 
       } 
@@ -263,38 +271,49 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
     var claseFila = (i === 0) ? 'class="cabecera"' : (esEntrenador ? 'class="fila-entrenador"' : ''); 
     html += '<tr ' + claseFila + '>'; 
     
-    for (var j = 0; j < datos[i].length; j++) { 
-      var valorCell = datos[i][j].toString().trim(); 
-      var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : ''; 
-      
-      var estiloColorInline = "";
-      // CORRECCIÓN: Añadimos && !esEntrenador para que el míster nunca herede colores del Sheets
-      if (i > 0 && !esEntrenador && matrizColores && matrizColores[i] && matrizColores[i][j]) {
-        var colorGoogle = matrizColores[i][j].toString().trim();
-        var tituloColumnaActual = cabeceraFila && cabeceraFila[j] ? cabeceraFila[j].toString().trim().toUpperCase() : "";
-        var esColumnaPermitida = (tituloColumnaActual.indexOf("NOM FUTBOL") > -1 || idTabla === "tablaDatosSecundaria");
-        
-        if (esColumnaPermitida && colorGoogle !== "#000000" && colorGoogle !== "") {
-          estiloColorInline = 'style="color: ' + colorGoogle + ' !important;"';
-        }
+    // DIBUJAR CELDAS PARA LA TABLA SECUNDARIA (COLUMNA K DE JUGADORES)
+    if (idTabla === "tablaDatosSecundaria") {
+      var valorCell = datos[i].toString().trim();
+      if (i === 0) {
+        html += '<th>' + valorCell + '</th>';
+      } else {
+        // Al activar esHTML, la web renderiza las etiquetas <span> de colores que ha fabricado Google
+        html += '<td>' + (esHTML ? valorCell : valorCell) + '</td>';
       }
-      
-      if (i === 0) { 
-        html += '<th>' + valorCell + '</th>'; 
-      } else { 
-        if (aplicarRoles && !esEntrenador) { 
-          var textoMinuscula = valorCell.toLowerCase(); 
-          if (textoMinuscula === "porter") claseCelda = 'class="rol-porter"'; 
-          else if (textoMinuscula === "defensa") claseCelda = 'class="rol-defensa"'; 
-          else if (textoMinuscula === "migcampista") claseCelda = 'class="rol-migcampista"'; 
-          else if (textoMinuscula === "davanter") claseCelda = 'class="rol-davanter"'; 
-          else if (indicesAutoCentrados.includes(j)) claseCelda = 'class="col-auto-centrada"'; 
-        } else if (indicesAutoCentrados.includes(j)) { 
-          claseCelda = 'class="col-auto-centrada"'; 
-        } 
-        html += '<td ' + claseCelda + ' ' + estiloColorInline + '>' + valorCell + '</td>'; 
-      } 
     } 
+    // DIBUJAR CELDAS PARA LA TABLA PRINCIPAL (C:I)
+    else {
+      for (var j = 0; j < datos[i].length; j++) { 
+        var valorCell = datos[i][j].toString().trim(); 
+        var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : ''; 
+        
+        var estiloColorInline = "";
+        if (i > 0 && !esEntrenador && matrizColores && matrizColores[i] && matrizColores[i][j]) {
+          var colorGoogle = matrizColores[i][j].toString().trim();
+          var tituloColumnaActual = cabeceraFila && cabeceraFila[j] ? cabeceraFila[j].toString().trim().toUpperCase() : "";
+          
+          if (tituloColumnaActual.indexOf("NOM FUTBOL") > -1 && colorGoogle !== "#000000" && colorGoogle !== "") {
+            estiloColorInline = 'style="color: ' + colorGoogle + ' !important;"';
+          }
+        }
+        
+        if (i === 0) { 
+          html += '<th>' + valorCell + '</th>'; 
+        } else { 
+          if (aplicarRoles && !esEntrenador) { 
+            var textoMinuscula = valorCell.toLowerCase(); 
+            if (textoMinuscula === "porter") claseCelda = 'class="rol-porter"'; 
+            else if (textoMinuscula === "defensa") claseCelda = 'class="rol-defensa"'; 
+            else if (textoMinuscula === "migcampista") claseCelda = 'class="rol-migcampista"'; 
+            else if (textoMinuscula === "davanter") claseCelda = 'class="rol-davanter"'; 
+            else if (indicesAutoCentrados.includes(j)) claseCelda = 'class="col-auto-centrada"'; 
+          } else if (indicesAutoCentrados.includes(j)) { 
+            claseCelda = 'class="col-auto-centrada"'; 
+          } 
+          html += '<td ' + claseCelda + ' ' + estiloColorInline + '>' + valorCell + '</td>'; 
+        } 
+      }
+    }
     html += '</tr>'; 
     if (aplicarRoles && esEntrenador) { 
       html += '<tr class="fila-separadora">'; 
