@@ -330,7 +330,7 @@ function mostrarTablaSub23(listaSub23) {
   }
   
   // Fabriquem la taula de 3 columnes demanada: Equip, Nom i Data Naixement
-  var html = '<div class="tabla-contenedor" style="max-width: 600px; margin: 20px auto 0 auto;"><table>';
+  var html = '<div class="tabla-contenedor" id="contenedorSub23" style="max-width: 600px; margin: 20px auto 0 auto;"><table>';
   html += '<tr class="cabecera"><th>Equip</th><th>Nom</th><th class="col-auto-centrada">Data Naixement</th></tr>';
   
   for (var i = 0; i < listaSub23.length; i++) {
