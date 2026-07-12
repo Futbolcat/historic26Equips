@@ -309,7 +309,7 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
 // NUEVA PANTALLA: CERCADOR JUGADORS SUB23
 // ==========================================
 function buscarSub23() {
-  document.getElementById('resultado').innerHTML = "<p class='cargando'>Buscant tots els jugadors SUB23 a les plantilles...</p>";
+  document.getElementById('resultado').innerHTML = "<p class='cargando'>Buscant tots els jugadors Sub23 a les plantilles...</p>";
   
   // 1. Blanquear el desplegable de equipos y el de jugadores
   document.getElementById('equipo').value = "";
