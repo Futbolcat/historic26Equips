@@ -268,13 +268,10 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
       var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : ''; 
       
       var estiloColorInline = "";
-      if (i > 0 && matrizColores && matrizColores[i] && matrizColores[i][j]) {
+      // CORRECCIÓN: Añadimos && !esEntrenador para que el míster nunca herede colores del Sheets
+      if (i > 0 && !esEntrenador && matrizColores && matrizColores[i] && matrizColores[i][j]) {
         var colorGoogle = matrizColores[i][j].toString().trim();
-        
-        // CORRECCIÓN: Buscamos el nombre de la cabecera actual para aplicar el filtro estricto
         var tituloColumnaActual = cabeceraFila && cabeceraFila[j] ? cabeceraFila[j].toString().trim().toUpperCase() : "";
-        
-        // FILTRO EXCLUSIVO: Solo permitimos el color si es la columna "NOM FUTBOL" o si estamos en la tabla secundaria (K) de baixes
         var esColumnaPermitida = (tituloColumnaActual.indexOf("NOM FUTBOL") > -1 || idTabla === "tablaDatosSecundaria");
         
         if (esColumnaPermitida && colorGoogle !== "#000000" && colorGoogle !== "") {
@@ -308,7 +305,6 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
   html += '</table></div>'; 
   return html; 
 }
-
 
 
 // ==========================================
