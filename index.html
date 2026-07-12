@@ -39,9 +39,6 @@
       .fila-entrenador td { background-color: #f3e5f5 !important; color: #4a148c; font-weight: bold; }    
       .fila-separadora { height: 25px; background-color: transparent !important; }
       .fila-separadora td { border: none !important; background: transparent !important; padding: 0 !important; }
-      .celda-equipo { display: flex; align-items: center; gap: 8px; }
-      .escudo-tabla-sub23 { height: 28px; width: 28px; object-fit: contain; display: inline-block; }
-      @media (max-width: 600px) { .texto-equipo-sub23 { display: none; } }
 
       @media (min-width: 600px) {
         body { padding: 30px; font-size: 15px; }
@@ -54,6 +51,13 @@
         h2 { font-size: 26px; }
         .logo-torneo { height: 80px; }
       }
+
+      .celda-equipo { display: flex; align-items: center; gap: 8px; }
+      .escudo-tabla-sub23 { height: 28px; width: 28px; object-fit: contain; display: inline-block; }
+      @media (max-width: 600px) { 
+        .texto-equipo-sub23 { display: none; }
+      }
+      
     </style>
   </head>
   <body>
