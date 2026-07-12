@@ -326,12 +326,16 @@ function mostrarTablaSub23(listaSub23) {
   html += '<tr class="cabecera"><th>Equip</th><th>Nom</th><th class="col-auto-centrada">Data Naixement</th></tr>';
   
   for (var i = 0; i < listaSub23.length; i++) {
-    var equipo = listaSub23[i][0];
-    var nombre = listaSub23[i][1];
-    var fecha = listaSub23[i][2];
+    var equipoNom = listaSub23[i].equipo;
+    var nombre = listaSub23[i].nombre;
+    var fecha = listaSub23[i].fecha;
+    
+    // Buscamos si tenemos el enlace del escudo de este club en tu diccionario de arriba
+    var urlEscudo = ESCUDOS_EQUIPOS[equipoNom] || "https://wikimedia.org";
     
     html += '<tr>';
-    html += '<td>' + equipo + '</td>';
+    // Colocamos el escudo y el nombre envueltos en clases de diseño inteligente
+    html += '<td><div class="celda-equipo"><img class="escudo-tabla-sub23" src="' + urlEscudo + '" alt="Escut"><span class="texto-equipo-sub23">' + equipoNom + '</span></div></td>';
     html += '<td>' + nombre + '</td>';
     html += '<td class="col-auto-centrada">' + fecha + '</td>';
     html += '</tr>';
