@@ -130,11 +130,13 @@ function procesarDatos(resultadoBloques) {
 
 function renderizarTablasCompletas() {
   if (!datosEquipoActual) return;
-  var htmlFinal = generarEstructuraTabla(datosEquipoActual.principal, "tablaDatosPrincipal", true); 
+  // Pasamos los textos y sus respectivos colores a cada tabla
+  var htmlFinal = generarEstructuraTabla(datosEquipoActual.principal, "tablaDatosPrincipal", true, datosEquipoActual.coloresP); 
   htmlFinal += "<div class='espacio-tablas'></div>"; 
-  htmlFinal += generarEstructuraTabla(datosEquipoActual.secundaria, "tablaDatosSecundaria", false); 
+  htmlFinal += generarEstructuraTabla(datosEquipoActual.secundaria, "tablaDatosSecundaria", false, datosEquipoActual.coloresS); 
   document.getElementById('resultado').innerHTML = htmlFinal;
 }
+
 
 // ==========================================
 // VISTA INTERACTIVA DE LA FITXA VERTICAL
@@ -228,7 +230,8 @@ function completarDatosFicha(nombreJugador) {
 // ==========================================
 // GENERAR TAULA CAMB DADES
 // ==========================================
-function generarEstructuraTabla(datos, idTabla, aplicarRoles) { 
+
+function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) { 
   if (!datos || datos.length === 0) return ''; 
   var html = '<div class="tabla-contenedor"><table id="' + idTabla + '">'; 
   var indicesAutoCentrados = []; 
@@ -243,26 +246,17 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
     } 
   }
   
-  // Bandera de control para detener la tabla principal después del entrenador
   var pararDespuesDeEntrenador = false;
   
   for (var i = 0; i < datos.length; i++) { 
-    // Si en la fila anterior ya pintamos al entrenador en la Tabla 1, rompemos el bucle por completo
-    if (aplicarRoles && pararDespuesDeEntrenador) {
-      break;
-    }
-    
+    if (aplicarRoles && pararDespuesDeEntrenador) break;
     var filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; }); 
     if (filaVacia) continue; 
     
     var esEntrenador = false; 
     if (aplicarRoles && i > 0) { 
       for (var c = 0; c < datos[i].length; c++) { 
-        if (datos[i][c].toString().trim().toLowerCase() === "entrenador") { 
-          esEntrenador = true; 
-          pararDespuesDeEntrenador = true; // Activamos el interruptor para la siguiente vuelta
-          break; 
-        } 
+        if (datos[i][c].toString().trim().toLowerCase() === "entrenador") { esEntrenador = true; pararDespuesDeEntrenador = true; break; } 
       } 
     } 
     
@@ -272,6 +266,16 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
     for (var j = 0; j < datos[i].length; j++) { 
       var valorCell = datos[i][j].toString().trim(); 
       var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : ''; 
+      
+      // NUEVO: Extraer el color de texto de la celda si viene del Sheets (ignora la fila 0 de títulos)
+      var estiloColorInline = "";
+      if (i > 0 && matrizColores && matrizColores[i] && matrizColores[i][j]) {
+        var colorGoogle = matrizColores[i][j].toString().trim();
+        // Solo aplicamos si el color no es el negro estándar (#000000) para no sobreescribir los roles
+        if (colorGoogle !== "#000000" && colorGoogle !== "") {
+          estiloColorInline = 'style="color: ' + colorGoogle + ' !important;"';
+        }
+      }
       
       if (i === 0) { 
         html += '<th>' + valorCell + '</th>'; 
@@ -286,11 +290,11 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
         } else if (indicesAutoCentrados.includes(j)) { 
           claseCelda = 'class="col-auto-centrada"'; 
         } 
-        html += '<td ' + claseCelda + '>' + valorCell + '</td>'; 
+        // Inyectamos el estilo de color inline si existe para esa celda
+        html += '<td ' + claseCelda + ' ' + estiloColorInline + '>' + valorCell + '</td>'; 
       } 
     } 
     html += '</tr>'; 
-    
     if (aplicarRoles && esEntrenador) { 
       html += '<tr class="fila-separadora">'; 
       for (var k = 0; k < datos[i].length; k++) html += '<td></td>'; 
@@ -300,6 +304,7 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
   html += '</table></div>'; 
   return html; 
 }
+
 
 // ==========================================
 // NUEVA PANTALLA: CERCADOR JUGADORS SUB23
