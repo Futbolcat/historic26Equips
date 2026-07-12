@@ -147,36 +147,31 @@ function detectarMiembro() {
   
   if (!miembroSeleccionado) {
     if (comboJugador && comboJugador.options) {
-      comboJugador.options[0].text = "Tria jugador"; 
+      comboJugador.options.text = "Tria jugador"; 
     }
     renderizarTablasCompletas();
     return;
   }
   
   if (comboJugador && comboJugador.options) {
-    comboJugador.options[0].text = "Esborrar";
+    comboJugador.options.text = "Esborrar";
   }
   
   var htmlFicha = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto; text-align: center;">';
-  //htmlFicha += '<h3 style="margin: 0; color: #1a73e8; font-size: 22px;">' + miembroSeleccionado + '</h3>';
-  htmlFicha += '<div id="datosFicha" style="margin-top:15px; text-align:left;"></div>'; // <-- Contenedor para los datos
+  htmlFicha += '<h3 style="margin: 0; color: #1a73e8; font-size: 22px;">Fitxa jugador</h3>';
+  htmlFicha += '<div id="datosFicha" style="margin-top:15px; text-align:left;"></div>';
   htmlFicha += '</div>';
   
   document.getElementById('resultado').innerHTML = htmlFicha;
-  
-  // Llamamos a la subfunción que buscará los datos (la crearemos en el siguiente paso)
   completarDatosFicha(miembroSeleccionado);
 }
 
 function completarDatosFicha(nombreJugador) {
   if (!datosEquipoActual) return;
   var datosP = datosEquipoActual.principal;
-  var datosS = datosEquipoActual.secundaria;
+  var datosS = datosEquipoActual.secundariaHTML; // <-- Actualizado al nuevo paquete multicolor
   
-  // Como sabemos que la columna de nombres es la segunda (Índice 1), la fijamos directamente
   var colNom = 3; 
-
-  // Buscamos en vertical qué fila coincide con el jugador seleccionado
   var filaIdx = -1;
   for (var i = 1; i < datosP.length; i++) {
     if (datosP[i][colNom].toString().trim() === nombreJugador) { 
@@ -186,16 +181,13 @@ function completarDatosFicha(nombreJugador) {
   }
   if (filaIdx === -1) return;
 
-  // Empezamos a fabricar las líneas de texto de la ficha hacia abajo
   var tablaHtml = '<table style="width: 100%; border-collapse: collapse;">';
   
-  // 1. Añadimos los datos de la Tabla Principal (C:I)
-  // Usamos datosP[0].length para contar estrictamente el número de columnas horizontales
+  // 1. Líneas de la Tabla Principal (C:I)
   if (datosP && datosP.length > 0) {
-    for (var j = 0; j < datosP[0].length; j++) {
-      var tit = datosP[0][j].toString().trim();
+    for (var j = 0; j < datosP.length; j++) {
+      var tit = datosP[j].toString().trim();
       var val = datosP[filaIdx][j].toString().trim();
-      
       if (tit === "" || tit.toUpperCase().indexOf("BAIXES") > -1) continue;
       
       tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
@@ -205,26 +197,24 @@ function completarDatosFicha(nombreJugador) {
     }
   }
   
-  // 2. Añadimos los datos de la Tabla Secundaria (K)
-  if (datosS && datosS.length > 0 && datosS[0]) {
-    var titS = datosS[0].toString().trim();
-    var valS = datosS[filaIdx][0].toString().trim();
+  // 2. Línea de la Tabla Secundaria (K - Baixes) con soporte multicolor
+  if (datosS && datosS.length > 0 && datosS[filaIdx]) {
+    var titS = datosS.toString().trim();
+    var valS = datosS[filaIdx].toString().trim();
     
-    // Filtro de seguridad por si la columna K se llama o contiene "BAIXES"
     if (titS !== "" && titS.toUpperCase().indexOf("BAIXES") === -1) {
       tablaHtml += '<tr style="border-bottom: 1px solid #ddd;">';
       tablaHtml += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 40%; font-size: 15px; text-transform: uppercase; white-space: normal; word-break: break-word;">' + titS + ':</td>';
+      // Inyectamos el valor como HTML para renderizar los múltiples colores de la celda
       tablaHtml += '<td style="padding: 10px; color: #333; font-size: 16px; white-space: normal; word-break: break-word;">' + valS + '</td>';
       tablaHtml += '</tr>';
     }
   }
-
-
   
   tablaHtml += '</table>';
-  // Inyectamos los datos limpios dentro de la tarjeta gris
   document.getElementById('datosFicha').innerHTML = tablaHtml;
 }
+
 
 // ==========================================
 // GENERAR TAULA CAMB DADES
