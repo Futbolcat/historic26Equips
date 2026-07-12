@@ -234,7 +234,6 @@ function completarDatosFicha(nombreJugador) {
 // ==========================================
 function generarEstructuraTabla(datos, idTabla, aplicarRoles) { 
   if (!datos || datos.length === 0) return ''; 
-  
   var html = '<div class="tabla-contenedor"><table id="' + idTabla + '">'; 
   var indicesAutoCentrados = []; 
   var cabeceraFila = datos[0]; 
@@ -248,7 +247,15 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
     } 
   }
   
+  // Bandera de control para detener la tabla principal después del entrenador
+  var pararDespuesDeEntrenador = false;
+  
   for (var i = 0; i < datos.length; i++) { 
+    // Si en la fila anterior ya pintamos al entrenador en la Tabla 1, rompemos el bucle por completo
+    if (aplicarRoles && pararDespuesDeEntrenador) {
+      break;
+    }
+    
     var filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; }); 
     if (filaVacia) continue; 
     
@@ -257,6 +264,7 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
       for (var c = 0; c < datos[i].length; c++) { 
         if (datos[i][c].toString().trim().toLowerCase() === "entrenador") { 
           esEntrenador = true; 
+          pararDespuesDeEntrenador = true; // Activamos el interruptor para la siguiente vuelta
           break; 
         } 
       } 
@@ -293,10 +301,10 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
       html += '</tr>'; 
     } 
   } 
-  
   html += '</table></div>'; 
   return html; 
 }
+
 
 // ==========================================
 // NUEVA PANTALLA: CERCADOR JUGADORS SUB23
