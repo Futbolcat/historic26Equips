@@ -279,8 +279,8 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
       
       // Fila 2: Subtítulos - Techos, suelos y separador central con tu color #ffde94
       html += '<tr class="cabecera">';
-      html += '<th style="font-size: 12px; padding: 8px 12px; border-top: 1px solid #ffde94 !important; border-bottom: 1px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #ffde94 !important;">JUGADOR</th>';
-      html += '<th style="font-size: 12px; padding: 8px 12px; border-top: 1px solid #ffde94 !important; border-bottom: 1px solid #ffde94 !important; border-left: 1px solid #ffde94 !important; border-right: 1px solid #815a01 !important;">DESTÍ</th>';
+      html += '<th style="font-size: 12px; padding: 8px 12px;">JUGADOR</th>';
+      html += '<th style="font-size: 12px; padding: 8px 12px;">DESTÍ</th>';
       html += '</tr>';
       continue; 
     }
