@@ -84,10 +84,11 @@
       #tablaDatosSecundaria tr:nth-child(2) th:first-child { border-left: 1px solid #815a01 !important; }
       #tablaDatosSecundaria tr:nth-child(2) th:last-child { border-right: 1px solid #815a01 !important; }
 
-      /* 4. REGLAS PARA LA TABLA DE SCOUTING GLOBAL SUB23 (1 FILA FIJA CORREGIDA) */
-      /* Apuntamos al contenedor exterior y a la tabla nativa que inyecta el script */
-      .tabla-contenedor table th { top: 0; }
-      .tabla-contenedor table tr:first-child th { border-top: 1px solid #815a01; border-bottom: 2px solid #815a01 !important; }
+      /* 4. REGLAS PARA LA TABLA DE SCOUTING GLOBAL SUB23 (CORREGIDO) */
+      #contenedorSub23 table { border-collapse: separate !important; border-spacing: 0 !important; width: 100%; }
+      #contenedorSub23 th { top: 0; border-top: 1px solid #815a01; border-bottom: 2px solid #815a01 !important; border-left: 1px solid #815a01; border-right: 1px solid #815a01; }
+      #contenedorSub23 td { border: 1px solid #815a01; padding: 14px 16px; background-color: #ffffff; }
+
 
 
 
