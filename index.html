@@ -14,22 +14,23 @@
       .espacio-tablas { margin-top: 30px; }
       
       /* CONTROLES EN FILA QUE SE ADAPTAN AUTOMÁTICAMENTE */
-      .controles { margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; width: 100%; box-sizing: border-box; }
+      .controles { display: flex; flex-direction: column; gap: 15px; width: 100%; box-sizing: border-box; margin-bottom: 20px;}
+     
+      /* EN PC, LOS ELEMENTOS SUPERIORES VAN EN UNA SOLA LÍNEA RECTA CENTRADA EN ALTURA */
+      .fila-superior-busqueda { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; }
       .selector-bloque { display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; }
+      
+      /* EL DESPLEGABLE SE QUEDA ESPERANDO ABAJO A LA IZQUIERDA CON SU ANCHO FIJO EXACTO */
+      .bloque-jugador { display: none; width: 100%; max-width: 250px; box-sizing: border-box; margin-top: 5px; margin-left: 62px; } 
+      
       .escudo-club { height: 50px; width: 50px; object-fit: contain; display: none; }      
-      .bloque-jugador { display: none; width: 100%; box-sizing: border-box; }
       
       /* BLOQUE INFERIOR PARA LEYENDA Y BOTÓN SUB23 */
       .bloque-inferior-controles { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; margin-top: 5px; }
       
-
-
-      
       select { padding: 14px; font-size: 18px; border: 2px solid #ccc; border-radius: 6px; background: white; flex-grow: 1; box-sizing: border-box; width: 100%; }
       button { padding: 14px; font-size: 18px; background-color: #9f6f01; color: #FFFFFF; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; box-sizing: border-box; transition: background 0.2s ease; }
-      button:hover { background-color: #3d2a02; }
-      
-
+      button:hover { background-color: #3d2a02; }    
       
       .cargando { color: #666; font-style: italic; margin-top: 15px; font-size: 17px; text-align: center; }
       table { border-collapse: collapse; width: 100%; background: white; table-layout: auto; border: 1px solid #815a01; }
@@ -75,6 +76,12 @@
       @media (max-width: 600px) { 
         .texto-equipo-sub23 { display: none; }
       }
+
+      @media (min-width: 768px) {
+        .fila-superior-busqueda { flex-direction: row; justify-content: flex-start; }
+        .selector-bloque { width: auto; }
+        #btnSub23 { margin-left: auto; }
+      }
       
     </style>
   </head>
@@ -86,48 +93,36 @@
       </div>
       
       <div class="controles">
-        <!-- FILA 1: Desplegable de Clubs + Botón Cerca -->
-        <div class="selector-bloque">
-          <img id="escudoClub" class="escudo-club" src="" alt="Escut">
-          <select id="equipo" onchange="cambiarEscudo()">
-            <option value="">Tria equip</option>
-          </select>
-          <button onclick="buscar()" style="width: auto; min-width: 120px;">Cerca</button>
+        <!-- FRANJA SUPERIOR: Todo en una sola fila recta en PC -->
+        <div class="fila-superior-busqueda">
+          <div class="selector-bloque">
+            <img id="escudoClub" class="escudo-club" src="" alt="Escut">
+            <select id="equipo" onchange="cambiarEscudo()">
+              <option value="">Tria equip</option>
+            </select>
+          </div>
+          
+          <button onclick="buscar()" style="width: auto; min-width: 110px; background-color: #815a01;">Cerca</button>
+          
+          <!-- LEYENDA INTEGRADA EN LA MISMA LÍNEA -->
+          <div class="separador-botones" style="margin: 0; border: none; padding: 0; width: auto; display: flex; gap: 12px;">
+            <div class="leyenda-item"><span class="leyenda-circulo" style="background-color: #38761d;"></span><span>Continua</span></div>
+            <div class="leyenda-item"><span class="leyenda-circulo" style="background-color: #1155cc;"></span><span>Possible fitxatge</span></div>
+            <div class="leyenda-item"><span class="leyenda-circulo" style="background-color: #cc0000;"></span><span>Possible baixa</span></div>
+            <div class="leyenda-item"><span class="leyenda-circulo" style="background-color: #674ea7;"></span><span>Possible destí</span></div>
+          </div>
+          
+          <button id="btnSub23" onclick="buscarSub23()" style="background-color: #815a01; width: auto; min-width: 110px;">Sub-23</button>
         </div>
         
-        <!-- FILA 2: Desplegable de Jugadores (Aparecerá justo debajo) -->
+        <!-- FRANJA INFERIOR: El buscador de jugadores aparece abajo, alineado al desplegable del club -->
         <div id="bloqueJugador" class="bloque-jugador">
           <select id="jugador" onchange="detectarMiembro()">
             <option value="">Tria jugador</option>
           </select>
         </div>
-
-        <!-- FILA 3: Contenedor para la Leyenda y el Botón SUB23 en los extremos -->
-        <div class="bloque-inferior-controles">
-          <!-- LEYENDA DE COLORES -->
-          <div class="separador-botones" style="margin: 0; border: none; padding: 0; width: auto;">
-            <div class="leyenda-item">
-              <span class="leyenda-circulo" style="background-color: #38761d;"></span>
-              <span>Continua</span>
-            </div>
-            <div class="leyenda-item">
-              <span class="leyenda-circulo" style="background-color: #1155cc;"></span>
-              <span>Possible fitxatge</span>
-            </div>
-            <div class="leyenda-item">
-              <span class="leyenda-circulo" style="background-color: #cc0000;"></span>
-              <span>Possible baixa</span>
-            </div>
-            <div class="leyenda-item">
-              <span class="leyenda-circulo" style="background-color: #674ea7;"></span>
-              <span>Possible destí</span>
-            </div>
-          </div>
-
-          <!-- BOTÓN SUB23 AL EXTREMO DERECHO -->
-          <button id="btnSub23" onclick="buscarSub23()" style="background-color: #2c3e50; width: auto; min-width: 120px;">SUB23</button>
-        </div>
       </div>
+
 
       
       <div id="resultado"></div>
