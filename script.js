@@ -269,13 +269,15 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
     if (i === 0 && idTabla === "tablaDatosSecundaria") {
       var tituloOriginalExcel = datos[i] ? datos[i].toString().trim() : "BAIXES 25/26";
       
+      // Fila 1: Título unificado (Las dos paredes exteriores van forzadas en oscuro #815a01)
       html += '<tr class="cabecera">';
-      html += '<th colspan="2" style="border-bottom: 1px solid #9f6f01;">' + tituloOriginalExcel + '</th>';
+      html += '<th colspan="2" style="border-bottom: 1px solid #9f6f01; border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important;">' + tituloOriginalExcel + '</th>';
       html += '</tr>';
       
+      // Fila 2: Subtítulos de columna (Paredes interiores claras #9f6f01 y extremos oscuros #815a01)
       html += '<tr class="cabecera">';
-      html += '<th style="font-size: 12px; padding: 8px 12px;">Jugador</th>';
-      html += '<th style="font-size: 12px; padding: 8px 12px;">Destí</th>';
+      html += '<th style="font-size: 12px; padding: 8px 12px; border-left: 1px solid #815a01 !important; border-right: 1px solid #9f6f01 !important;">JUGADOR</th>';
+      html += '<th style="font-size: 12px; padding: 8px 12px; border-left: 1px solid #9f6f01 !important; border-right: 1px solid #815a01 !important;">DESTÍ</th>';
       html += '</tr>';
       continue; 
     }
@@ -293,26 +295,22 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
         var esColumnaPermitida = (tituloColumnaActual.indexOf("NOM FUTBOL") > -1 || idTabla === "tablaDatosSecundaria");
         
         if (esColumnaPermitida && colorGoogle !== "#000000" && colorGoogle !== "") {
-          stiloColorInline = estiloColorInline = 'style="color: ' + colorGoogle + ' !important;"';
+          estiloColorInline = 'style="color: ' + colorGoogle + ' !important;"';
         }
       }
       
       if (i === 0) { 
         html += '<th>' + valorCell + '</th>'; 
       } else { 
-        // MODIFICACIÓN DE PRECISIÓN: Buscamos únicamente el PRIMER guion
         if (idTabla === "tablaDatosSecundaria") {
           var primerGuionIdx = valorCell.indexOf("-");
           var nombreJugadorBaja = "";
           var destinoBaja = "";
           
           if (primerGuionIdx > -1) {
-            // El nombre es estrictamente lo que hay ANTES del primer guion
             nombreJugadorBaja = valorCell.substring(0, primerGuionIdx).trim();
-            // El destino es TODO lo que quede DESPUÉS del primer guion (incluyendo otros guiones)
             destinoBaja = valorCell.substring(primerGuionIdx + 1).trim();
           } else {
-            // Control de seguridad por si en la celda no se escribió ningún guion
             nombreJugadorBaja = valorCell;
             destinoBaja = "";
           }
