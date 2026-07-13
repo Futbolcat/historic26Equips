@@ -36,7 +36,7 @@
       table { border-collapse: collapse; width: 100%; background: white; table-layout: auto; border: 1px solid #815a01; }
       .tabla-contenedor { margin-top: 10px; border-radius: 6px; border: 1px solid #815a01; overflow: auto; max-height: 450px; -webkit-overflow-scrolling: touch; }
       th, td { border: 1px solid #815a01; padding: 14px 16px; text-align: left; font-size: 16px; white-space: nowrap; }
-      th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; border: 1px solid #815a01; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; border-bottom: 2px solid #ffde94 !important; position: sticky; top: -1px; z-index: 10; }
+      /*th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; border: 1px solid #815a01; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; border-bottom: 2px solid #ffde94 !important; position: sticky; top: -1px; z-index: 10; }*/
       th:first-child { border-left: 1px solid #815a01 !important; }
       th:last-child { border-right: 1px solid #815a01 !important; }
       
@@ -56,6 +56,41 @@
       .leyenda-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #563d04; white-space: nowrap; }
       .leyenda-circulo { height: 11px; width: 11px; border-radius: 50%; display: inline-block; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 
+      .celda-equipo { display: flex; align-items: center; gap: 8px; }
+      .escudo-tabla-sub23 { height: 28px; width: 28px; object-fit: contain; display: inline-block; }
+      /* AJUSTE RESPONSIVO PARA LA NUEVA COLUMNA DE DESTINO EN LAS BAJAS */
+      #tablaDatosSecundaria td { white-space: normal !important; word-break: break-word; }
+
+      /* ========================================================== */
+      /* CONTROL DE CABECERAS FIJAS POR SEPARADO (STICKY HEADERS)   */
+      /* ========================================================== */
+
+      /* 1. ESTILOS BASE COMPARTIDOS PARA TODOS LOS TÍTULOS */
+      th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; position: sticky; z-index: 10; box-sizing: border-box; }
+      
+      /* Aseguramos que las celdas de los jugadores tengan fondo blanco para hacer de pantalla opaca */
+      td { background-color: #ffffff; }
+
+      /* 2. REGLAS PARA LA TABLA PRINCIPAL DE JUGADORES (1 FILA FIJA) */
+      #tablaDatosPrincipal th { top: 0; border: 1px solid #815a01; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; border-bottom: 2px solid #ffde94 !important; }
+      #tablaDatosPrincipal th:first-child { border-left: 1px solid #815a01 !important; }
+      #tablaDatosPrincipal th:last-child { border-right: 1px solid #815a01 !important; }
+
+      /* 3. REGLAS PARA LA TABLA DE BAJAS (2 FILAS FIJAS EN ESCALÓN) */
+      /* Fila 1 (Título grande de Baixes): Se queda clavado en el punto 0 */
+      #tablaDatosSecundaria tr:nth-child(1) th { top: 0; z-index: 12; border: 1px solid #815a01; border-bottom: 1px solid #ffde94 !important; }
+      
+      /* Fila 2 (Subtítulos Jugador/Destí): Se queda clavado justo debajo del anterior (a la altura exacta de su padding) */
+      /* El valor 'top: 44px' es la altura exacta que mide la barra superior en vertical */
+      #tablaDatosSecundaria tr:nth-child(2) th { top: 44px; z-index: 11; border: 1px solid #815a01; border-top: 1px solid #ffde94 !important; border-bottom: 2px solid #ffde94 !important; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; }
+      #tablaDatosSecundaria tr:nth-child(2) th:first-child { border-left: 1px solid #815a01 !important; }
+      #tablaDatosSecundaria tr:nth-child(2) th:last-child { border-right: 1px solid #815a01 !important; }
+
+      /* 4. REGLAS PARA LA TABLA DE SCOUTING GLOBAL SUB23 (1 FILA FIJA) */
+      #contenedorSub23 th { top: 0; border: 1px solid #815a01; border-bottom: 2px solid #815a01 !important; }
+
+
+      
       @media (min-width: 600px) {
         body { padding: 30px; font-size: 15px; }
         .contenedor { padding: 25px; }
@@ -70,11 +105,6 @@
         .bloque-inferior-controles { flex-direction: row; justify-content: space-between; }
       }
       
-      .celda-equipo { display: flex; align-items: center; gap: 8px; }
-      .escudo-tabla-sub23 { height: 28px; width: 28px; object-fit: contain; display: inline-block; }
-      /* AJUSTE RESPONSIVO PARA LA NUEVA COLUMNA DE DESTINO EN LAS BAJAS */
-      #tablaDatosSecundaria td { white-space: normal !important; word-break: break-word; }
-
       @media (max-width: 600px) { 
         .texto-equipo-sub23 { display: none; }
       }
