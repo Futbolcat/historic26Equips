@@ -71,10 +71,10 @@
       th:last-child { border-right: none !important; }
       td { background-color: #ffffff; }
 
-      /* TABLA SECUNDARIA: DOBLE FIJACIÓN BLINDADA SIN FILTRACIONES */
+      /* TABLA SECUNDARIA: ENCAJE DE BORDES Y FIJACIÓN EN ESCALÓN REPARADOS */
       #tablaDatosSecundaria td { white-space: normal !important; word-break: break-word; }
-      .bajas-piso-1 th { top: 0 !important; position: sticky !important; z-index: 12 !important; }
-      .bajas-piso-2 th { top: 43px !important; position: sticky !important; z-index: 11 !important; border-top: none !important; }
+      #tablaDatosSecundaria tr:nth-child(1) th { position: sticky !important; top: 0 !important; z-index: 12 !important; border-top: 1px solid #815a01 !important; border-bottom: 1px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important; }
+      #tablaDatosSecundaria tr:nth-child(2) th { position: sticky !important; top: 43px !important; z-index: 11 !important; border-top: none !important; border-bottom: 2px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #ffde94 !important; }
 
       /* TABLA SUB23: EXCEPCIÓN RESPONSIVA Y REJILLA INTEGRADA */
       #contenedorSub23 table { border-collapse: separate !important; border-spacing: 0 !important; width: 100%; }
