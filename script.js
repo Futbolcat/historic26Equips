@@ -275,7 +275,7 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
       var tituloOriginalExcel = datos[i] ? datos[i].toString().trim() : "BAIXES 25/26";
       
       html += '<tr class="cabecera">';
-      html += '<th colspan="2" style="border-bottom: 1px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important;">' + tituloOriginalExcel + '</th>';
+      html += '<th colspan="2" style="border-bottom: 1px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important;border-top: 3px solid #815a01 !important;">' + tituloOriginalExcel + '</th>';
       html += '</tr>';
       
       html += '<tr class="cabecera">';
