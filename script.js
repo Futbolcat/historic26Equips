@@ -231,7 +231,13 @@ function completarDatosFicha(nombreJugador) {
 
 function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) { 
   if (!datos || datos.length === 0) return ''; 
-  var html = '<div class="tabla-contenedor"><table id="' + idTabla + '">'; 
+  
+  var estiloContenedor = "";
+  if (idTabla === "tablaDatosSecundaria") {
+    estiloContenedor = 'style="max-width: max-content; margin: 20px auto 0 auto;"';
+  }
+  
+  var html = '<div class="tabla-contenedor" ' + estiloContenedor + '><table id="' + idTabla + '">'; 
   var indicesAutoCentrados = []; 
   var cabeceraFila = datos; 
   
@@ -259,6 +265,21 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
     } 
     
     var claseFila = (i === 0) ? 'class="cabecera"' : (esEntrenador ? 'class="fila-entrenador"' : ''); 
+    
+    if (i === 0 && idTabla === "tablaDatosSecundaria") {
+      var tituloOriginalExcel = datos[i] ? datos[i].toString().trim() : "BAIXES 25/26";
+      
+      html += '<tr class="cabecera">';
+      html += '<th colspan="2" style="border-bottom: 1px solid #9f6f01;">' + tituloOriginalExcel + '</th>';
+      html += '</tr>';
+      
+      html += '<tr class="cabecera">';
+      html += '<th style="font-size: 12px; padding: 8px 12px;">Jugador</th>';
+      html += '<th style="font-size: 12px; padding: 8px 12px;">Destí</th>';
+      html += '</tr>';
+      continue; 
+    }
+    
     html += '<tr ' + claseFila + '>'; 
     
     for (var j = 0; j < datos[i].length; j++) { 
@@ -272,23 +293,29 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
         var esColumnaPermitida = (tituloColumnaActual.indexOf("NOM FUTBOL") > -1 || idTabla === "tablaDatosSecundaria");
         
         if (esColumnaPermitida && colorGoogle !== "#000000" && colorGoogle !== "") {
-          estiloColorInline = 'style="color: ' + colorGoogle + ' !important;"';
+          stiloColorInline = estiloColorInline = 'style="color: ' + colorGoogle + ' !important;"';
         }
       }
       
       if (i === 0) { 
-        // MODIFICACIÓN DE CABECERA PARA LA TABLA DE BAJAS
-        if (idTabla === "tablaDatosSecundaria") {
-          html += '<th>Jugador</th><th>Destí</th>';
-        } else {
-          html += '<th>' + valorCell + '</th>'; 
-        }
+        html += '<th>' + valorCell + '</th>'; 
       } else { 
-        // MODIFICACIÓN DE DATOS PARA LA TABLA DE BAJAS: Dividimos por el guion
+        // MODIFICACIÓN DE PRECISIÓN: Buscamos únicamente el PRIMER guion
         if (idTabla === "tablaDatosSecundaria") {
-          var partesBaja = valorCell.split("-");
-          var nombreJugadorBaja = partesBaja[0] ? partesBaja[0].trim() : "";
-          var destinoBaja = partesBaja[1] ? partesBaja[1].trim() : "";
+          var primerGuionIdx = valorCell.indexOf("-");
+          var nombreJugadorBaja = "";
+          var destinoBaja = "";
+          
+          if (primerGuionIdx > -1) {
+            // El nombre es estrictamente lo que hay ANTES del primer guion
+            nombreJugadorBaja = valorCell.substring(0, primerGuionIdx).trim();
+            // El destino es TODO lo que quede DESPUÉS del primer guion (incluyendo otros guiones)
+            destinoBaja = valorCell.substring(primerGuionIdx + 1).trim();
+          } else {
+            // Control de seguridad por si en la celda no se escribió ningún guion
+            nombreJugadorBaja = valorCell;
+            destinoBaja = "";
+          }
           
           html += '<td ' + estiloColorInline + '>' + nombreJugadorBaja + '</td>';
           html += '<td ' + estiloColorInline + '>' + destinoBaja + '</td>';
@@ -317,6 +344,7 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
   html += '</table></div>'; 
   return html; 
 }
+
   
 
 
