@@ -72,7 +72,9 @@
       
       .celda-equipo { display: flex; align-items: center; gap: 8px; }
       .escudo-tabla-sub23 { height: 28px; width: 28px; object-fit: contain; display: inline-block; }
-      
+      /* AJUSTE RESPONSIVO PARA LA NUEVA COLUMNA DE DESTINO EN LAS BAJAS */
+      #tablaDatosSecundaria td { white-space: normal !important; word-break: break-word; }
+
       @media (max-width: 600px) { 
         .texto-equipo-sub23 { display: none; }
       }
