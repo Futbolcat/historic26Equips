@@ -269,23 +269,24 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
     var claseFila = (i === 0) ? 'class="cabecera"' : (esEntrenador ? 'class="fila-entrenador"' : ''); 
     
     // =========================================================================
-    // CORRECCIÓN: CABECERA DE LA TABLA DE BAJAS CON TU NUEVO COLOR #ffde94
+    // MODIFICACIÓN DE LA FILA 0 PARA LA TABLA DE BAJAS: DOBLE FILA IDENTIFICADA
     // =========================================================================
     if (i === 0 && idTabla === "tablaDatosSecundaria") {
       var tituloOriginalExcel = datos[i] ? datos[i].toString().trim() : "BAIXES 25/26";
       
-      // Fila 1: Título unificado - Separador inferior con tu color #ffde94
-      html += '<tr class="cabecera">';
+      // Fila 1: Le añadimos la clase 'bajas-piso-1' para congelarla arriba del todo
+      html += '<tr class="cabecera bajas-piso-1">';
       html += '<th colspan="2" style="border-bottom: 1px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important;">' + tituloOriginalExcel + '</th>';
       html += '</tr>';
       
-      // Fila 2: Subtítulos - Techos, suelos y separador central con tu color #ffde94
-      html += '<tr class="cabecera">';
-      html += '<th style="font-size: 12px; padding: 8px 12px;">JUGADOR</th>';
-      html += '<th style="font-size: 12px; padding: 8px 12px;">DESTÍ</th>';
+      // Fila 2: Le añadimos la clase 'bajas-piso-2' para congelarla justo debajo en escalón
+      html += '<tr class="cabecera bajas-piso-2">';
+      html += '<th style="font-size: 12px; padding: 8px 12px; border-top: 1px solid #ffde94 !important; border-bottom: 1px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #ffde94 !important;">JUGADOR</th>';
+      html += '<th style="font-size: 12px; padding: 8px 12px; border-top: 1px solid #ffde94 !important; border-bottom: 1px solid #ffde94 !important; border-left: 1px solid #ffde94 !important; border-right: 1px solid #815a01 !important;">DESTÍ</th>';
       html += '</tr>';
       continue; 
     }
+
     
     html += '<tr ' + claseFila + '>'; 
     
