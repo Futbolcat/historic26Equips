@@ -85,7 +85,16 @@
       #contenedorSub23 tr:last-child td { border-bottom: none !important; }
       #contenedorSub23 th:last-child, #contenedorSub23 td:last-child { border-right: none !important; }
       #contenedorSub23 th:nth-child(2), #contenedorSub23 td:nth-child(2) { word-break: break-word; }
-      #contenedorSub23 th:nth-child(3), #contenedorSub23 td:nth-child(3) { width: 100px; min-width: 100px; text-align: center !important; }
+      /*#contenedorSub23 th:nth-child(3), #contenedorSub23 td:nth-child(3) { width: 100px; min-width: 100px; text-align: center !important; }*/
+
+      
+      #contenedorSub23 th:nth-child(3), #contenedorSub23 td:nth-child(3) { 
+        width: 75px; 
+        min-width: 75px; 
+        text-align: center !important; 
+        white-space: normal !important; /* Permite que la fecha salte de línea si es necesario */
+      }
+
 
       /* ========================================================== */
       /* 5. REGLAS RESPONSIVAS ADAPTABLES (MEDIA QUERIES)           */
