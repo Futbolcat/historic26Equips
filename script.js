@@ -380,8 +380,9 @@ function mostrarTablaSub23(listaSub23) {
   }
   
   var html = '<div class="tabla-contenedor" style="max-width: 600px; margin: 20px auto 0 auto;"><table>';
-  // CORRECCIÓN INLINE: Forzamos el ancho de 100px directamente en la etiqueta TH de la fecha
-  html += '<tr class="cabecera"><th>Equip</th><th>Nom</th><th class="col-auto-centrada" style="width: 100px; min-width: 100px;">Data Naixement</th></tr>';
+  
+  // CORRECCIÓN INLINE AQUÍ: Reducimos de 100px a 70px y permitimos saltos de línea con white-space: normal
+  html += '<tr class="cabecera"><th>Equip</th><th>Nom</th><th class="col-auto-centrada" style="width: 70px; min-width: 70px; white-space: normal !important;">Data Naixement</th></tr>';
   
   for (var i = 0; i < listaSub23.length; i++) {
     var equipoNom = listaSub23[i][0];
@@ -393,13 +394,14 @@ function mostrarTablaSub23(listaSub23) {
     
     html += '<tr>';
     html += '<td><div class="celda-equipo"><img class="escudo-tabla-sub23" src="' + urlEscudo + '" alt="Escut"><span class="texto-equipo-sub23">' + equipoLimpio + '</span></div></td>';
-    // Activamos que el nombre pueda respirar y usar el espacio restante
     html += '<td style="white-space: normal !important; word-break: break-word;">' + nombre + '</td>';
-    // CORRECCIÓN INLINE: Forzamos los 100px en la celda TD de la fecha de cada jugador
-    html += '<td class="col-auto-centrada" style="width: 100px; min-width: 100px;">' + fecha + '</td>';
+    
+    // CORRECCIÓN INLINE AQUÍ TAMBIÉN: Ajustamos a 70px y añadimos white-space normal para las celdas de los jugadores
+    html += '<td class="col-auto-centrada" style="width: 70px; min-width: 70px; white-space: normal !important;">' + fecha + '</td>';
     html += '</tr>';
   }
   
   html += '</table></div>';
   document.getElementById('resultado').innerHTML = html;
 }
+
