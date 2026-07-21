@@ -5,8 +5,8 @@ function iniciar() {
 	//console.log("Iniciando...");
     carregarConfiguracio();
 
-    crearGrups();
-
+    //crearGrups();
+	crearTorneig()
     //crearSemifinals();
 
 }
@@ -25,14 +25,133 @@ function carregarConfiguracio() {
         CONFIG.logos.torneig;
 }
 
-function crearGrups() {
+function crearTorneig(){
+
+    const contenedor = document.getElementById("contenedor");
+
+    contenedor.appendChild(crearGrup(CONFIG.grups[0])); // Dilluns
+    contenedor.appendChild(crearGrup(CONFIG.grups[1])); // Dimarts
+
+    contenedor.appendChild(crearSemifinals());
+
+    contenedor.appendChild(crearGrup(CONFIG.grups[2])); // Dimecres
+    contenedor.appendChild(crearGrup(CONFIG.grups[3])); // Dijous
+
+    contenedor.appendChild(crearFinal());
+
+}
+
+function crearSemifinals(){
+
+    const aside = document.createElement("aside");
+
+    aside.id = "semifinals";
+    aside.className = "fase-final";
+
+
+    aside.innerHTML = `
+
+        <div class="eliminatoria">
+
+            <h2>Semifinals</h2>
+
+            <div class="partido-final">
+
+                <div class="equipo-final" data-origen="dilluns">
+                    <span>Guanyador Dilluns</span>
+                </div>
+
+                <div class="vs">
+                    VS
+                </div>
+
+                <div class="equipo-final" data-origen="dimarts">
+                    <span>Guanyador Dimarts</span>
+                </div>
+
+            </div>
+
+
+            <div class="partido-final">
+
+                <div class="equipo-final" data-origen="dimecres">
+                    <span>Guanyador Dimecres</span>
+                </div>
+
+                <div class="vs">
+                    VS
+                </div>
+
+                <div class="equipo-final" data-origen="dijous">
+                    <span>Guanyador Dijous</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    return aside;
+
+}
+
+function crearFinal(){
+
+    const div = document.createElement("div");
+
+    div.id = "final";
+    div.className = "fase-final";
+
+
+    div.innerHTML = `
+
+        <div class="eliminatoria">
+
+            <h2>Final</h2>
+
+
+            <div class="partido-final">
+
+                <div class="equipo-final" data-origen="s1">
+                    <span>Guanyador S1</span>
+                </div>
+
+
+                <div class="vs">
+                    VS
+                </div>
+
+
+                <div class="equipo-final" data-origen="s2">
+                    <span>Guanyador S2</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    return div;
+
+}
+
+
+
+
+
+/*function crearGrups() {
 
     const contenidor = document.getElementById("contenedor");
     CONFIG.grups.forEach(grup => {
         contenidor.appendChild(crearGrup(grup));
     });
 
-}
+}*/
+
 function crearGrup(grup) {
 
     const article = document.createElement("article");

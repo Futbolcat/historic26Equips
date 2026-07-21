@@ -51,7 +51,8 @@ header h1{
     max-width:1400px;
     margin:30px auto;
     display:grid;
-    grid-template-columns: 1fr 1fr 320px;
+    /*grid-template-columns: 1fr 1fr 320px;*/
+	grid-template-columns: 1fr 1fr 0.65fr;
     grid-template-rows:auto auto;
     gap:15px;
     padding:0 20px;
@@ -65,7 +66,7 @@ header h1{
     border-radius:12px;
     overflow:hidden;
     box-shadow:0 5px 15px rgba(0,0,0,.08);
-    margin-bottom:10px;
+    /*margin-bottom:10px;*/
 }
 
 /*.grupo h2{
@@ -139,7 +140,8 @@ header h1{
 .clasificacion th,
 .clasificacion td{
     text-align:center;
-    padding:10px;
+    /*padding:10px;*/
+	padding: 8px 4px;
     border-bottom:1px solid #ececec;
 }
 
@@ -151,7 +153,14 @@ header h1{
 /* Primera columna: equipo */
 .clasificacion th:first-child,
 .clasificacion td:first-child {
-    text-align:left;
+    text-align:center;
+    width:30%;
+	padding-left:10px;
+}
+
+.clasificacion th:not(:first-child),
+.clasificacion td:not(:first-child){
+    width:10%;
 }
 
 .clasificacion tbody tr:first-child{
@@ -159,9 +168,13 @@ header h1{
     font-weight:bold;
 }
 
-.clasificacion tbody tr:hover{
-    background:#f7f9fc;
+.clasificacion tbody tr:last-child td{
+    border-bottom:1px solid #b0b8c5;
 }
+
+/*.clasificacion tbody tr:hover{
+    background:#f7f9fc;
+}*/
 
 .equip-classificacio{
     display:flex;
@@ -177,25 +190,35 @@ header h1{
 }
 
 .partidos{
-    padding:15px;
+    padding: 10px;
 }
 
-.partido{
+/*.partido{
     display:grid;
     grid-template-columns: 1fr auto 1fr auto;
     align-items:center;
-    gap:12px;
-    padding:10px 0;
+    gap:4px;
+    padding:6px 0;
+    border-bottom:1px solid #e5e5e5;
+}*/
+
+.partido{
+    display:grid;
+    grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto;
+    align-items:center;
+    gap:4px;
+    padding:6px 0;
     border-bottom:1px solid #e5e5e5;
 }
 
 .equipo{
-	width:240px;
+	/*width:160px;*/
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:2px;
     min-width:0;
 }
+
 
 .equipo img{
     width:30px;
@@ -209,36 +232,46 @@ header h1{
     text-overflow:ellipsis;
     white-space:nowrap;
     font-weight:600;
+	min-width:0;
+	/*font-size:14px;*/
 }
 
 .marcador{
     display:flex;
     align-items:center;
-    gap:6px;
+    gap:2px;
 }
 
 .gol{
-    width:42px;
-    height:34px;
+    width:34px;
+    height:32px;
     text-align:center;
-    font-size:18px;
+    font-size:16px;
     font-weight:bold;
 }
 
 .penaltis{
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: #666;
-    font-size: 14px;
+    display:flex;
+    align-items:center;
+    gap:2px;
+    color:#666;
+    font-size:12px;
+    white-space:nowrap;
+    flex-shrink:0;
 }
 
 .penaltis span.icono{
-    font-size: 18px;
+    font-size: 16px;
 }
 
+/*.penal{
+    width:26px;
+    text-align:center;
+}*/
+
 .penal{
-    width:34px;
+    width:30px;
+    height:24px;
     text-align:center;
 }
 
@@ -286,6 +319,10 @@ header h1{
 .semifinales{
     grid-column:3;
     grid-row:1;
+	background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
 }
 
 .semifinales h2{
@@ -339,7 +376,42 @@ header h1{
 .final{
     grid-column:3;
     grid-row:2;
+    height:100%;
 }
+
+.fase-final{
+    background:white;
+    border-radius:12px;
+    padding:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);	
+    overflow:hidden;
+}
+
+.eliminatoria h2{
+    background:#1f6ed4;
+    color:white;
+    padding:10px;
+    text-align:center;
+    border-radius:8px;
+}
+
+
+.partido-final{
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:10px;
+    margin-top:15px;
+}
+
+
+.equipo-final{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:600;
+    padding:8px;
+}
+
 
 @media (max-width: 600px) {
 
