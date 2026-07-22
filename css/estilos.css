@@ -114,7 +114,8 @@ header h1{
     position:relative;
 }
 
-.grupo-bloqueado .partidos {
+.grupo-bloqueado .partidos,
+.grupo-bloqueado .fase-final {
     pointer-events:none;
     opacity:0.65;
 }
@@ -314,8 +315,8 @@ header h1{
     background:#fff;
     border-radius:12px;
     box-shadow:0 5px 15px rgba(0,0,0,.08);
-    overflow:hidden;   /* importante */
-}*/
+    overflow:hidden;   
+}
 .semifinales{
     grid-column:3;
     grid-row:1;
@@ -331,7 +332,7 @@ header h1{
     padding:14px;
     text-align:center;
     font-size:22px;
-}
+}*/
 
 .semi{
     margin:20px;
@@ -412,6 +413,35 @@ header h1{
     padding:8px;
 }
 
+
+.partido-eliminatoria{
+
+    display:grid;
+
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+
+    grid-template-rows:auto auto;
+
+    align-items:center;
+
+    gap:4px;
+
+    padding:8px 0;
+
+    border-bottom:1px solid #e5e5e5;
+
+}
+
+
+.partido-eliminatoria .penaltis{
+
+    grid-column:2;
+
+    justify-content:center;
+
+    min-height:24px;
+
+}
 
 @media (max-width: 600px) {
 
